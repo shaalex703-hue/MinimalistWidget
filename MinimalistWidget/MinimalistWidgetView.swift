@@ -82,8 +82,8 @@ extension View {
 }
 
 // MARK: - SwiftUI Preview
-#Preview(as: .systemLarge) {
-    MinimalistWidget()
-} timeline: {
-    MinimalistEntry(date: .now, favorites: FavoriteApp.defaultFavorites)
+#Preview {
+    MinimalistWidgetView(date: Date(), favorites: FavoriteApp.defaultFavorites)
+        .frame(width: 350, height: 350)
+        .background(Color.black)
 }
