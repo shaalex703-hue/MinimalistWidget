@@ -25,7 +25,7 @@
 		AA0200072C00000100000001 /* TimeWastingApps.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0200082C00000100000001 /* TimeWastingApps.swift */; };
 		AA0200082C00000100000001 /* MindfulQuote.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0200092C00000100000001 /* MindfulQuote.swift */; };
 		AA0200092C00000100000001 /* MinimalistQuoteWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0200102C00000100000001 /* MinimalistQuoteWidget.swift */; };
-		AA0300012C00000100000001 /* MinimalistWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = CC0200012C00000100000001 /* MinimalistWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AA0300012C00000100000001 /* MinimalistWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = CC0200012C00000100000001 /* MinimalistWidgetExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
