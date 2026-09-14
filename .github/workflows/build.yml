@@ -19,25 +19,45 @@ jobs:
       - name: Select Xcode Version
         run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
 
-      - name: Build MinimalistApp & Widget Extension
+      - name: Build MinimalistApp for Simulator
         run: |
           xcodebuild clean build \
             -project MinimalistWidget.xcodeproj \
             -scheme MinimalistApp \
             -destination 'generic/platform=iOS Simulator' \
-            -derivedDataPath build \
+            -derivedDataPath build_sim \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Compress Build Artifacts
+      - name: Build MinimalistApp for iPhone Device
+        run: |
+          xcodebuild build \
+            -project MinimalistWidget.xcodeproj \
+            -scheme MinimalistApp \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build_device \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO
+
+      - name: Package Builds and IPA
         run: |
           mkdir -p output
-          cd build/Build/Products/Debug-iphonesimulator
+          cd build_sim/Build/Products/Debug-iphonesimulator
           zip -r ../../../../output/MinimalistApp-Simulator.zip MinimalistApp.app
           cd ../../../..
+          
+          mkdir -p output/Payload
+          cp -r build_device/Build/Products/Debug-iphoneos/MinimalistApp.app output/Payload/
+          cd output
+          zip -r MinimalistApp.ipa Payload
+          rm -rf Payload
+          cd ..
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: MinimalistApp-iOS-Build
-          path: output/MinimalistApp-Simulator.zip
+          path: |
+            output/MinimalistApp.ipa
+            output/MinimalistApp-Simulator.zip
           retention-days: 14
