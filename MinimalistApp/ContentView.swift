@@ -31,6 +31,7 @@ struct ContentView: View {
     @StateObject private var interventionManager = InterventionManager.shared
     @Environment(\.openURL) private var openURL
     @State private var activeAlertMessage: String?
+    @State private var isFullscreenLauncherPresented = false
     
     // Dynamische Favoritenliste basierend auf den Slots
     private var currentFavorites: [FavoriteApp] {
@@ -48,6 +49,44 @@ struct ContentView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 28) {
+                    // MARK: - Direkter Minimalist Phone Modus (ohne Homescreen-Umweg)
+                    Button(action: {
+                        isFullscreenLauncherPresented = true
+                    }) {
+                        HStack(spacing: 14) {
+                            Image(systemName: "iphone.gen3")
+                                .font(.system(size: 24, weight: .light))
+                                .foregroundColor(.black)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Minimalist Phone Modus (Vollbild)")
+                                    .font(.system(size: 15, weight: .semibold))
+                                    .foregroundColor(.black)
+                                Text("App direkt als Minimalist-Homescreen nutzen")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(Color.black.opacity(0.7))
+                            }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.black)
+                        }
+                        .padding(16)
+                        .background(Color.white)
+                        .cornerRadius(16)
+                    }
+                    .fullScreenCover(isPresented: $isFullscreenLauncherPresented) {
+                        FullscreenLauncherView(
+                            favorites: currentFavorites,
+                            quote: selectedQuote,
+                            onExit: {
+                                isFullscreenLauncherPresented = false
+                            }
+                        )
+                    }
+                    
                     // MARK: - Banner für aktive Abfang-Routine
                     HStack(spacing: 12) {
                         Image(systemName: "hourglass")
@@ -365,3 +404,83 @@ struct ContentView: View {
     ContentView()
         .preferredColorScheme(.dark)
 }
+
+// MARK: - Vollbild Minimalist Phone Launcher Ansicht
+struct FullscreenLauncherView: View {
+    let favorites: [FavoriteApp]
+    let quote: String
+    let onExit: () -> Void
+    
+    private func formattedDate(for date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "de_DE")
+        formatter.dateFormat = "EEEE, d. MMMM"
+        return formatter.string(from: date)
+    }
+    
+    private func formattedTime(for date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "de_DE")
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: date)
+    }
+    
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 1.0)) { context in
+            ZStack(alignment: .topTrailing) {
+                Color.black.ignoresSafeArea()
+                
+                VStack(alignment: .leading, spacing: 0) {
+                    // Header: Uhrzeit & Datum
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(formattedDate(for: context.date))
+                            .font(.system(size: 15, weight: .regular))
+                            .foregroundColor(Color.white.opacity(0.65))
+                        
+                        Text(formattedTime(for: context.date))
+                            .font(.system(size: 52, weight: .ultraLight))
+                            .foregroundColor(.white)
+                    }
+                    .padding(.top, 40)
+                    .padding(.bottom, 22)
+                    
+                    // Zitat
+                    Text(quote)
+                        .font(.system(size: 14, weight: .light, design: .serif))
+                        .italic()
+                        .foregroundColor(Color.white.opacity(0.75))
+                        .padding(.bottom, 36)
+                    
+                    // Vertikale Favoritenliste
+                    VStack(alignment: .leading, spacing: 22) {
+                        ForEach(favorites) { app in
+                            Link(destination: app.widgetDestinationURL) {
+                                Text(app.name)
+                                    .font(.system(size: 21, weight: .light))
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .contentShape(Rectangle())
+                            }
+                        }
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 28)
+                
+                // Dezenter Button zum Beenden des Vollbild-Modus
+                Button(action: onExit) {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 15))
+                        .foregroundColor(Color.white.opacity(0.5))
+                        .padding(12)
+                        .background(Color.white.opacity(0.1))
+                        .clipShape(Circle())
+                }
+                .padding(.top, 40)
+                .padding(.trailing, 24)
+            }
+        }
+    }
+}
+
