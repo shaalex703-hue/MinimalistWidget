@@ -66,9 +66,9 @@ public struct MinimalistWidget: Widget {
         ) { entry in
             MinimalistWidgetView(date: entry.date, favorites: entry.favorites)
         }
-        .configurationDisplayName("Minimalist")
-        .description("Dezentes Dashboard mit Datum, Uhrzeit und 5 wählbaren App-Favoriten.")
-        .supportedFamilies([.systemLarge])
+        .configurationDisplayName("Minimalist Launcher")
+        .description("Dezentes Dashboard mit Datum, Uhrzeit und wählbaren App-Favoriten.")
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .contentMarginsDisabled()
     }
 }

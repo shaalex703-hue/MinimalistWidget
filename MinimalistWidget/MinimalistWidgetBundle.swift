@@ -10,5 +10,6 @@ import SwiftUI
 struct MinimalistWidgetBundle: WidgetBundle {
     var body: some Widget {
         MinimalistWidget()
+        MinimalistQuoteWidget()
     }
 }

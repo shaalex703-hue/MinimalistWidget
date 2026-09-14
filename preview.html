@@ -7,18 +7,18 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Minimalist">
     <meta name="theme-color" content="#000000">
-    <title>MinimalistWidget – iPhone & PC Simulator</title>
+    <title>Minimalist Phone iOS – Simulator & Widgets</title>
     <style>
         :root {
-            --bg-canvas: #0c0d10;
-            --iphone-frame: #1e2025;
-            --iphone-bezel: #090a0c;
+            --bg-canvas: #090a0d;
+            --iphone-frame: #1c1d22;
+            --iphone-bezel: #0a0b0e;
             --iphone-screen: #000000;
             --text-primary: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.65);
             --text-tertiary: rgba(255, 255, 255, 0.4);
             --accent-border: rgba(255, 255, 255, 0.12);
-            --card-bg: rgba(255, 255, 255, 0.07);
+            --card-bg: rgba(255, 255, 255, 0.06);
         }
 
         * {
@@ -39,28 +39,28 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 20px 16px;
-            background-image: radial-gradient(circle at 50% 20%, #171b26 0%, #0c0d10 70%);
+            padding: 24px 16px;
+            background-image: radial-gradient(circle at 50% 15%, #141724 0%, #090a0d 75%);
         }
 
         /* Top Header (Desktop only) */
         header.top-bar {
             text-align: center;
-            margin-bottom: 20px;
-            max-width: 600px;
+            margin-bottom: 18px;
+            max-width: 680px;
         }
 
         header.top-bar h1 {
-            font-size: 24px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.6px;
             margin-bottom: 6px;
         }
 
         header.top-bar p {
             font-size: 14px;
             color: var(--text-secondary);
-            line-height: 1.4;
+            line-height: 1.45;
         }
 
         /* Mode Switcher Tabs */
@@ -70,7 +70,7 @@
             border-radius: 999px;
             padding: 4px;
             gap: 4px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             border: 1px solid var(--accent-border);
         }
 
@@ -78,9 +78,9 @@
             background: transparent;
             border: none;
             color: var(--text-secondary);
-            padding: 8px 16px;
+            padding: 8px 18px;
             border-radius: 999px;
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -93,16 +93,17 @@
         .tab-btn.active {
             background: #ffffff;
             color: #000000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            font-weight: 600;
         }
 
         /* Main Workspace */
         .workspace {
             display: flex;
-            gap: 32px;
+            gap: 36px;
             align-items: flex-start;
             justify-content: center;
-            max-width: 1100px;
+            max-width: 1140px;
             width: 100%;
             flex-wrap: wrap;
         }
@@ -111,12 +112,12 @@
         .iphone-wrapper {
             position: relative;
             width: 380px;
-            height: 770px;
+            height: 780px;
             background: var(--iphone-bezel);
             border-radius: 54px;
             padding: 12px;
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 
-                        0 0 0 2px rgba(255, 255, 255, 0.15),
+            box-shadow: 0 28px 70px -15px rgba(0, 0, 0, 0.9), 
+                        0 0 0 2px rgba(255, 255, 255, 0.16),
                         inset 0 0 4px rgba(255, 255, 255, 0.3);
             flex-shrink: 0;
             transition: all 0.3s ease;
@@ -162,15 +163,16 @@
 
         /* iOS Status Bar */
         .status-bar {
-            height: 46px;
+            height: 48px;
             padding: 14px 26px 0 26px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 600;
             color: #ffffff;
             z-index: 90;
+            background: #000000;
         }
 
         .status-icons {
@@ -180,81 +182,110 @@
             font-size: 11px;
         }
 
-        /* Screen View */
+        /* Screen Views */
         .screen-view {
             display: none;
             flex: 1;
             flex-direction: column;
             overflow-y: auto;
             position: relative;
+            background: #000000;
         }
 
         .screen-view.active {
             display: flex;
         }
 
-        /* Homescreen */
+        /* =================================================== */
+        /* VIEW 1: REINER MINIMALIST PHONE HOMESCREEN          */
+        /* =================================================== */
         #view-homescreen {
-            background: radial-gradient(circle at 50% 10%, #15161b 0%, #050608 80%);
-            padding: 16px 18px;
-        }
-
-        /* Minimalist Large Widget (.systemLarge) */
-        .widget-large {
-            width: 100%;
-            height: 330px;
-            background: #000000;
-            border-radius: 26px;
-            padding: 26px 22px 20px 22px;
+            background: #000000; /* Reines Tiefschwarz (#000000) */
+            padding: 10px 16px 30px 16px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            position: relative;
+            gap: 16px;
+        }
+
+        /* Widget Layout Switcher (Innerhalb Homescreen) */
+        .layout-bar {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 6px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+
+        .layout-pill {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 10.5px;
+            padding: 4px 9px;
+            border-radius: 999px;
             cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            white-space: nowrap;
+            transition: all 0.2s;
         }
 
-        .widget-large:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 35px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255,255,255,0.2);
+        .layout-pill.active {
+            background: rgba(255, 255, 255, 0.22);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
-        .widget-large:active {
-            transform: scale(0.985);
+        /* Minimalist Widgets – Vollkommen nahtlos auf Schwarz */
+        .widget-card {
+            background: #000000;
+            border-radius: 26px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            position: relative;
+            transition: transform 0.15s ease, border-color 0.2s ease;
+            cursor: pointer;
         }
 
-        /* Widget Header */
+        .widget-card:hover {
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        /* Large Widget (.systemLarge) */
+        .widget-large-view {
+            padding: 22px 20px 18px 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 330px;
+        }
+
         .widget-header {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .widget-date {
             font-size: 13.5px;
             font-weight: 400;
-            color: rgba(255, 255, 255, 0.65);
-            margin-bottom: 3px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 2px;
         }
 
         .widget-time {
-            font-size: 40px;
+            font-size: 42px;
             font-weight: 200;
-            letter-spacing: -1px;
+            letter-spacing: -1.2px;
             color: #ffffff;
             line-height: 1;
         }
 
-        /* Widget Apps List */
         .widget-app-list {
             display: flex;
             flex-direction: column;
-            gap: 18px; /* Genau Vorgabe: spacing: 18 */
+            gap: 16px;
         }
 
         .widget-app-item {
-            font-size: 18px; /* Genau Vorgabe: size: 18 */
-            font-weight: 300; /* Genau Vorgabe: weight: .light */
-            color: #ffffff; /* Genau Vorgabe: reiner weißer Text */
+            font-size: 17.5px;
+            font-weight: 300;
+            color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -266,79 +297,113 @@
 
         .widget-app-item:hover, .widget-app-item:active {
             opacity: 0.75;
-            transform: translateX(3px);
+            transform: translateX(4px);
         }
 
         .widget-app-tag {
-            font-size: 10px;
+            font-size: 9.5px;
             padding: 2px 7px;
             border-radius: 999px;
             background: rgba(255, 255, 255, 0.12);
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.65);
             font-weight: 500;
             letter-spacing: 0.5px;
         }
 
-        .widget-hint {
-            position: absolute;
-            bottom: 10px;
-            right: 14px;
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.3);
-            pointer-events: none;
+        /* Medium Launcher Widget (.systemMedium) */
+        .widget-medium-view {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            min-height: 155px;
         }
 
-        /* Homescreen Dummy App Icons */
-        .homescreen-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-top: 28px;
-            padding: 0 4px;
+        .widget-medium-left {
+            width: 85px;
+            flex-shrink: 0;
         }
 
-        .dummy-app {
+        .widget-medium-divider {
+            width: 1px;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .widget-medium-right {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 6px;
+            gap: 14px;
         }
 
-        .dummy-icon {
-            width: 54px;
-            height: 54px;
-            border-radius: 13px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        /* Quote Widget (.systemMedium & .systemSmall) */
+        .widget-quote-view {
+            padding: 20px 22px;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 155px;
         }
 
-        .dummy-name {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.7);
+        .quote-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
         }
 
-        /* Begleit-App View */
+        .quote-text {
+            font-size: 16px;
+            font-weight: 300;
+            font-style: italic;
+            font-family: -apple-system, Georgia, serif;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.45;
+            margin-top: 12px;
+        }
+
+        /* Small Widget (.systemSmall) */
+        .widget-small-view {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto;
+        }
+
+        /* Minimalist Hint Tag */
+        .widget-badge-label {
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.25);
+            pointer-events: none;
+            letter-spacing: 0.4px;
+        }
+
+        /* =================================================== */
+        /* VIEW 2: BEGLEIT-APP (MINIMALIST PHONE APP)          */
+        /* =================================================== */
         #view-app {
-            background: #08080a;
-            padding: 18px 16px 40px 16px;
+            background: #050608;
+            padding: 18px 16px 60px 16px;
         }
 
         .app-nav-title {
             font-size: 22px;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             letter-spacing: -0.5px;
         }
 
         .section-box {
-            background: #14151a;
+            background: #121318;
             border-radius: 16px;
             padding: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             border: 1px solid var(--accent-border);
         }
 
@@ -349,6 +414,46 @@
             letter-spacing: 0.8px;
             text-transform: uppercase;
             margin-bottom: 12px;
+        }
+
+        .setup-step-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .setup-step-row:last-child {
+            border-bottom: none;
+        }
+
+        .step-num {
+            width: 22px;
+            height: 22px;
+            background: #ffffff;
+            color: #000000;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .step-text h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .step-text p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
         }
 
         .slot-row {
@@ -364,51 +469,70 @@
         }
 
         .slot-label {
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 500;
         }
 
         .slot-select {
-            background: #23252d;
+            background: #1f2129;
             color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.16);
             border-radius: 8px;
-            padding: 5px 10px;
-            font-size: 13px;
+            padding: 5px 8px;
+            font-size: 12.5px;
             outline: none;
             cursor: pointer;
+            max-width: 180px;
         }
 
-        .test-row {
+        .quote-select-item {
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.15s;
         }
 
-        .test-row:last-child {
-            border-bottom: none;
+        .quote-select-item:hover {
+            background: rgba(255, 255, 255, 0.09);
+            color: #fff;
         }
 
-        .test-btn {
+        .quote-select-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .btn-action-pill {
             background: #ffffff;
             color: #000000;
             border: none;
             border-radius: 999px;
-            padding: 5px 14px;
-            font-size: 12px;
+            padding: 7px 16px;
+            font-size: 12.5px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .test-btn:hover, .test-btn:active {
-            background: #e0e0e0;
-            transform: scale(1.03);
+        .btn-action-pill:hover {
+            transform: scale(1.02);
+            background: #e6e6e6;
         }
 
-        /* Achtsamkeits-Zwischenscreen (MindfulPauseView) */
+        /* =================================================== */
+        /* VIEW 3: ACHTSAMKEITS-PAUSE (MINDFUL PAUSE INTERVENTION) */
+        /* =================================================== */
         #view-mindful {
             position: absolute;
             top: 0;
@@ -497,7 +621,7 @@
         }
 
         .mindful-text {
-            font-size: 20px;
+            font-size: 19.5px;
             font-weight: 300;
             line-height: 1.45;
             color: #ffffff;
@@ -577,7 +701,7 @@
         .control-panel {
             flex: 1;
             min-width: 320px;
-            max-width: 460px;
+            max-width: 480px;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -591,7 +715,7 @@
         }
 
         .panel-card h2 {
-            font-size: 17px;
+            font-size: 17.5px;
             font-weight: 600;
             margin-bottom: 10px;
             display: flex;
@@ -655,10 +779,10 @@
                 left: 50%;
                 transform: translateX(-50%);
                 z-index: 150;
-                background: rgba(20, 20, 25, 0.85);
+                background: rgba(20, 20, 25, 0.88);
                 backdrop-filter: blur(20px);
                 margin: 0;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
             }
 
             .workspace {
@@ -684,11 +808,7 @@
             }
 
             #view-homescreen {
-                padding: 24px 20px 80px 20px;
-            }
-
-            .widget-large {
-                height: 350px;
+                padding: 16px 18px 80px 18px;
             }
 
             #view-app {
@@ -705,14 +825,14 @@
 
     <!-- Header (auf PC sichtbar) -->
     <header class="top-bar">
-        <h1>MinimalistWidget Simulator</h1>
-        <p>Interaktive Live-Vorschau deines iOS Widgets & der Abfang-Routine. Teste es hier am PC oder scanne den QR-Code mit deinem iPhone!</p>
+        <h1>Minimalist Phone iOS – Live Simulator</h1>
+        <p>Dein iPhone ohne bunte Icons und ohne Ablenkung. Alles läuft über minimalistische Widgets auf tiefschwarzem Hintergrund mit 10-Sekunden Achtsamkeits-Pause.</p>
     </header>
 
-    <!-- Tab Steuerung -->
+    <!-- Tab Steuerung (Homescreen vs. App vs. Pause) -->
     <div class="tab-controls">
-        <button class="tab-btn active" onclick="switchView('homescreen')">📱 Widget-Homescreen</button>
-        <button class="tab-btn" onclick="switchView('app')">⚙️ Begleit-App</button>
+        <button class="tab-btn active" onclick="switchView('homescreen')">📱 Minimalist Homescreen</button>
+        <button class="tab-btn" onclick="switchView('app')">⚙️ Begleit-App & Guide</button>
         <button class="tab-btn" onclick="triggerMindfulPause('Instagram', 'instagram://')">⏳ 10s Pause</button>
     </div>
 
@@ -736,125 +856,136 @@
                     </div>
                 </div>
 
-                <!-- View 1: Homescreen with Large Widget -->
+                <!-- VIEW 1: HOMESCREEN (REINES MINIMALIST PHONE) -->
                 <div id="view-homescreen" class="screen-view active">
                     
-                    <!-- Das .systemLarge Minimalist Widget -->
-                    <div class="widget-large" id="main-widget">
-                        <div class="widget-header">
-                            <div class="widget-date" id="widget-date-display">Montag, 14. September</div>
-                            <div class="widget-time" id="widget-time-display">12:24</div>
-                        </div>
-
-                        <!-- 5 Apps in VStack(alignment: .leading, spacing: 18) -->
-                        <div class="widget-app-list" id="widget-slots-container">
-                            <!-- Injected via JavaScript -->
-                        </div>
-
-                        <div class="widget-hint">MinimalistWidget • .systemLarge</div>
+                    <!-- Layout Umschalter für Widgets -->
+                    <div class="layout-bar">
+                        <div class="layout-pill active" onclick="selectLayout('full')">🌟 Komplett-Setup</div>
+                        <div class="layout-pill" onclick="selectLayout('large')">Großer Launcher</div>
+                        <div class="layout-pill" onclick="selectLayout('medium')">Split Launcher</div>
+                        <div class="layout-pill" onclick="selectLayout('quote')">Achtsamkeit</div>
                     </div>
 
-                    <!-- Dummy Homescreen App Icons -->
-                    <div class="homescreen-row">
-                        <div class="dummy-app">
-                            <div class="dummy-icon">⚙️</div>
-                            <div class="dummy-name">Einstellungen</div>
-                        </div>
-                        <div class="dummy-app">
-                            <div class="dummy-icon">📁</div>
-                            <div class="dummy-name">Dateien</div>
-                        </div>
-                        <div class="dummy-app">
-                            <div class="dummy-icon">🧭</div>
-                            <div class="dummy-name">Safari</div>
-                        </div>
-                        <div class="dummy-app">
-                            <div class="dummy-icon">⛅</div>
-                            <div class="dummy-name">Wetter</div>
-                        </div>
+                    <!-- CONTAINER FÜR DIE WIDGETS -->
+                    <div id="widgets-display-container" style="display: flex; flex-direction: column; gap: 16px;">
+                        <!-- Dynamisch über JS gerendert -->
                     </div>
 
                 </div>
 
-                <!-- View 2: Begleit-App (ContentView) -->
+                <!-- VIEW 2: BEGLEIT-APP (MINIMALIST APP & GUIDE) -->
                 <div id="view-app" class="screen-view">
-                    <div class="app-nav-title">Minimalist Widget</div>
+                    <div class="app-nav-title">Minimalist Phone</div>
 
-                    <!-- Abfang-Routine Banner -->
+                    <!-- Abfang-Routine Status Banner -->
                     <div class="section-box" style="display:flex; align-items:center; gap:12px;">
-                        <span style="font-size:22px;">⏳</span>
+                        <span style="font-size:24px;">⏳</span>
                         <div>
-                            <div style="font-size:14px; font-weight:600;">Achtsamkeits-Pause aktiv</div>
-                            <div style="font-size:12px; color:var(--text-secondary);">Social Media Apps werden vor dem Start 10s abgefangen.</div>
+                            <div style="font-size:14px; font-weight:600;">Achtsamkeits-Pause Aktiv</div>
+                            <div style="font-size:12px; color:var(--text-secondary);">Social Media Apps werden vor dem Start 10 Sek. entschleunigt.</div>
                         </div>
                     </div>
 
-                    <!-- Slot Konfiguration -->
+                    <!-- 4-Schritte Einrichtungsanleitung -->
                     <div class="section-box">
-                        <div class="section-header">Favoriten-Slots (SelectFavoritesIntent)</div>
+                        <div class="section-header">In 4 Schritten zum Minimalist Phone</div>
+                        
+                        <div class="setup-step-row">
+                            <div class="step-num">1</div>
+                            <div class="step-text">
+                                <h4>Schwarzen Hintergrund setzen</h4>
+                                <p>Reines Schwarz (#000000) lässt die Widgets nahtlos mit dem Display verschmelzen.</p>
+                                <button class="btn-action-pill" style="margin-top: 8px;" onclick="downloadBlackWallpaper()">
+                                    🖤 4K Schwarzbild downloaden
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="setup-step-row">
+                            <div class="step-num">2</div>
+                            <div class="step-text">
+                                <h4>App-Icons vom Home-Bildschirm entfernen</h4>
+                                <p>Drücke lange auf Apps ➔ „App entfernen“ ➔ „Vom Home-Bildschirm entfernen“. Sie bleiben sicher in der App-Mediathek.</p>
+                            </div>
+                        </div>
+
+                        <div class="setup-step-row">
+                            <div class="step-num">3</div>
+                            <div class="step-text">
+                                <h4>Minimalist Widgets platzieren</h4>
+                                <p>Halte den leeren Bildschirm gedrückt ➔ „+“ oben links ➔ „Minimalist“ wählen ➔ Großes Launcher- & Zitat-Widget ablegen.</p>
+                            </div>
+                        </div>
+
+                        <div class="setup-step-row">
+                            <div class="step-num">4</div>
+                            <div class="step-text">
+                                <h4>Alles läuft über Widgets</h4>
+                                <p>Starte Apps per reinem Text-Tap. Social Media wird automatisch durch die 10-Sekunden-Pause abgefangen.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6 Favoriten-Slots Konfiguration -->
+                    <div class="section-box">
+                        <div class="section-header">6 Favoriten-Slots (SelectFavoritesIntent)</div>
                         <div id="app-slots-editor">
-                            <!-- Injected via JavaScript -->
+                            <!-- Injected via JS -->
                         </div>
                     </div>
 
-                    <!-- Deep Link Schnelltest -->
+                    <!-- Achtsamkeits-Zitate Auswahl -->
                     <div class="section-box">
-                        <div class="section-header">Social-Media Abfang-Routine testen</div>
-                        <div class="test-row">
-                            <div>
-                                <div style="font-size:14px; font-weight:500;">Instagram</div>
-                                <div style="font-size:11px; color:#888;">instagram://</div>
-                            </div>
-                            <button class="test-btn" onclick="triggerMindfulPause('Instagram', 'instagram://')">10s Test</button>
+                        <div class="section-header">Tägliche Achtsamkeits-Zitate</div>
+                        <div id="quotes-list-editor">
+                            <!-- Injected via JS -->
                         </div>
-                        <div class="test-row">
-                            <div>
-                                <div style="font-size:14px; font-weight:500;">TikTok</div>
-                                <div style="font-size:11px; color:#888;">tiktok://</div>
+                    </div>
+
+                    <!-- Schnelltest für Abfang-Routine -->
+                    <div class="section-box">
+                        <div class="section-header">Achtsamkeits-Pause Testen</div>
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:13.5px;">Instagram</span>
+                                <button class="btn-action-pill" onclick="triggerMindfulPause('Instagram', 'instagram://')">Testen</button>
                             </div>
-                            <button class="test-btn" onclick="triggerMindfulPause('TikTok', 'tiktok://')">10s Test</button>
-                        </div>
-                        <div class="test-row">
-                            <div>
-                                <div style="font-size:14px; font-weight:500;">YouTube</div>
-                                <div style="font-size:11px; color:#888;">youtube://</div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:13.5px;">TikTok</span>
+                                <button class="btn-action-pill" onclick="triggerMindfulPause('TikTok', 'tiktok://')">Testen</button>
                             </div>
-                            <button class="test-btn" onclick="triggerMindfulPause('YouTube', 'youtube://')">10s Test</button>
-                        </div>
-                        <div class="test-row">
-                            <div>
-                                <div style="font-size:14px; font-weight:500;">X / Twitter</div>
-                                <div style="font-size:11px; color:#888;">x://</div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:13.5px;">YouTube</span>
+                                <button class="btn-action-pill" onclick="triggerMindfulPause('YouTube', 'youtube://')">Testen</button>
                             </div>
-                            <button class="test-btn" onclick="triggerMindfulPause('X / Twitter', 'x://')">10s Test</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- View 3: Achtsamkeits-Zwischenscreen (MindfulPauseView) -->
+                <!-- VIEW 3: ACHTSAMKEITS-PAUSE (MINDFUL PAUSE VIEW) -->
                 <div id="view-mindful">
-                    <div class="mindful-app-badge" id="mindful-target-app">INSTAGRAM</div>
-
                     <div>
-                        <!-- Animated Circular Countdown -->
+                        <div class="mindful-app-badge" id="mindful-app-name">INSTAGRAM</div>
+                    </div>
+
+                    <div class="mindful-center">
                         <div class="countdown-container">
-                            <svg class="countdown-svg" viewBox="0 0 140 140">
-                                <circle class="countdown-bg-ring" cx="70" cy="70" r="65"></circle>
-                                <circle class="countdown-progress-ring" id="progress-circle" cx="70" cy="70" r="65"></circle>
+                            <svg class="countdown-svg" viewBox="0 0 150 150">
+                                <circle class="countdown-bg-ring" cx="75" cy="75" r="65"></circle>
+                                <circle class="countdown-progress-ring" id="countdown-circle" cx="75" cy="75" r="65"></circle>
                             </svg>
                             <div class="countdown-digits">
-                                <div class="countdown-number" id="countdown-display">10</div>
-                                <div class="countdown-unit" id="countdown-unit-label">SEKUNDEN</div>
+                                <span class="countdown-number" id="countdown-seconds">10</span>
+                                <span class="countdown-unit">SEKUNDEN</span>
                             </div>
                         </div>
 
-                        <!-- User prompt exact text -->
                         <p class="mindful-text">
                             Nimm dir einen Moment Zeit. Musst du diese App jetzt wirklich öffnen?
                         </p>
                     </div>
 
-                    <!-- Two Action Buttons -->
                     <div class="mindful-actions">
                         <button class="btn-continue" id="btn-continue-app" onclick="continueToTargetApp()">Weiter</button>
                         <button class="btn-cancel" onclick="cancelMindfulPause()">Abbrechen</button>
@@ -867,28 +998,28 @@
             </div>
         </div>
 
-        <!-- Sidebar (PC) -->
+        <!-- Sidebar Control Panel (PC) -->
         <div class="control-panel">
             
             <!-- QR-Code Card für echtes iPhone -->
             <div class="panel-card qr-card">
-                <h2>📲 Auf deinem echten iPhone öffnen</h2>
-                <p>Nimm dein iPhone, öffne die normale <strong>Kamera-App</strong> und halte sie auf diesen QR-Code:</p>
+                <h2>📲 Auf deinem echten iPhone testen</h2>
+                <p>Öffne die <strong>Kamera-App</strong> auf deinem iPhone und scanne diesen QR-Code:</p>
                 
                 <img class="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https://shaalex703-hue.github.io/MinimalistWidget/" alt="iPhone QR Code">
                 
-                <p style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;">Oder tippe diesen Link in Safari auf deinem iPhone ein:</p>
+                <p style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;">Direktlink in Safari:</p>
                 <a class="qr-link" href="https://shaalex703-hue.github.io/MinimalistWidget/" target="_blank">https://shaalex703-hue.github.io/MinimalistWidget/</a>
             </div>
 
+            <!-- Minimalist Phone Philosophie -->
             <div class="panel-card">
-                <h2>✨ Was auf deinem echten iPhone passiert:</h2>
-                <p style="margin-bottom:8px;">Wenn du den Link auf deinem iPhone in Safari öffnest:</p>
-                <ul class="instructions-list" style="list-style:none; display:flex; flex-direction:column; gap:10px; font-size:13px; color:var(--text-secondary);">
-                    <li>✅ <strong>Echtes Touch-Gefühl:</strong> Passt sich randlos an deinen iPhone-Bildschirm an.</li>
-                    <li>✅ <strong>Echte Deep Links:</strong> Ein Fingertipp auf <em>Telefon</em> ruft tatsächlich die Telefon-App auf.</li>
-                    <li>✅ <strong>Echte 10s-Pause:</strong> Ein Fingertipp auf <em>Instagram</em> startet die Pause auf deinem iPhone-Display.</li>
-                    <li>✅ <strong>Zum Home-Bildschirm:</strong> Tippe in Safari unten auf <em>Teilen</em> ➔ <em>„Zum Home-Bildschirm“</em>.</li>
+                <h2>✨ Das Minimalist Phone Prinzip</h2>
+                <ul style="list-style:none; display:flex; flex-direction:column; gap:12px; font-size:13.5px; color:var(--text-secondary);">
+                    <li>🖤 <strong>Keine bunten Icons:</strong> Keine Notification-Dots oder optische Reizüberflutung.</li>
+                    <li>🧩 <strong>Alles über Widgets:</strong> Dein Home-Bildschirm besteht ausschließlich aus schlichten Text-Widgets.</li>
+                    <li>⏳ <strong>10s Achtsamkeits-Pause:</strong> Verhindert unbewusstes Öffnen von Instagram, TikTok & YouTube.</li>
+                    <li>⚡ <strong>Schnellzugriff:</strong> Telefon, WhatsApp, Notizen und Musik mit nur einem Fingertipp erreichbar.</li>
                 </ul>
             </div>
 
@@ -897,41 +1028,55 @@
     </div>
 
     <script>
-        // Erkennt, ob wir uns auf einem echten iPhone oder Touch-Smartphone befinden
-        const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth <= 600;
-
-        // Verfügbare System-Apps & URL-Schemes
+        // Verfügbare System-Apps & URL-Schemes (entspricht SelectFavoritesIntent.swift)
         const AVAILABLE_APPS = [
             { id: "phone", name: "Telefon", scheme: "tel://", isSocial: false },
-            { id: "messages", name: "Nachrichten", scheme: "sms://", isSocial: false },
-            { id: "facetime", name: "FaceTime", scheme: "facetime://", isSocial: false },
-            { id: "calendar", name: "Kalender", scheme: "calshow://", isSocial: false },
-            { id: "camera", name: "Kamera", scheme: "camera://", isSocial: false },
+            { id: "messages", name: "Nachrichten", scheme: "messages://", isSocial: false },
+            { id: "whatsapp", name: "WhatsApp", scheme: "whatsapp://", isSocial: false },
+            { id: "spotify", name: "Spotify", scheme: "spotify://", isSocial: false },
             { id: "notes", name: "Notizen", scheme: "mobilenotes://", isSocial: false },
+            { id: "camera", name: "Kamera", scheme: "camera://", isSocial: false },
+            { id: "calendar", name: "Kalender", scheme: "calshow://", isSocial: false },
+            { id: "safari", name: "Safari", scheme: "https://www.apple.com", isSocial: false },
+            { id: "music", name: "Musik", scheme: "music://", isSocial: false },
             { id: "photos", name: "Fotos", scheme: "photos-redirect://", isSocial: false },
             { id: "mail", name: "Mail", scheme: "message://", isSocial: false },
             { id: "maps", name: "Karten", scheme: "maps://", isSocial: false },
-            { id: "music", name: "Musik", scheme: "music://", isSocial: false },
             { id: "reminders", name: "Erinnerungen", scheme: "x-apple-reminderkit://", isSocial: false },
             { id: "settings", name: "Einstellungen", scheme: "app-prefs://", isSocial: false },
             { id: "clock", name: "Uhr", scheme: "clock-alarm://", isSocial: false },
             { id: "shortcuts", name: "Kurzbefehle", scheme: "shortcuts://", isSocial: false },
-            { id: "safari", name: "Safari", scheme: "https://apple.com", isSocial: false },
             { id: "instagram", name: "Instagram", scheme: "instagram://", isSocial: true },
             { id: "tiktok", name: "TikTok", scheme: "tiktok://", isSocial: true },
             { id: "youtube", name: "YouTube", scheme: "youtube://", isSocial: true },
-            { id: "twitter", name: "X / Twitter", scheme: "twitter://", isSocial: true },
+            { id: "twitter", name: "X / Twitter", scheme: "x://", isSocial: true },
             { id: "reddit", name: "Reddit", scheme: "reddit://", isSocial: true }
         ];
 
-        // Aktuelle Belegung der 5 Favoriten-Slots
+        // 8 Achtsamkeits-Zitate (entspricht MindfulQuote.swift)
+        const MINDFUL_QUOTES = [
+            "Weniger Bildschirm, mehr Leben.",
+            "Sei im Hier und Jetzt präsent.",
+            "Fokus auf das Wesentliche.",
+            "Brauchst du diese App jetzt wirklich?",
+            "Atme durch und nimm dir Zeit.",
+            "Qualität vor digitaler Quantität.",
+            "Dein Tag gehört dir, nicht dem Feed.",
+            "Stille ist der wahre Luxus."
+        ];
+
+        // Aktuelle Belegung der 6 Favoriten-Slots
         let currentSlots = [
             AVAILABLE_APPS.find(a => a.id === "phone"),
             AVAILABLE_APPS.find(a => a.id === "messages"),
-            AVAILABLE_APPS.find(a => a.id === "instagram"), // Social Media zum direkten Testen
+            AVAILABLE_APPS.find(a => a.id === "whatsapp"),
+            AVAILABLE_APPS.find(a => a.id === "spotify"),
             AVAILABLE_APPS.find(a => a.id === "notes"),
-            AVAILABLE_APPS.find(a => a.id === "calendar")
+            AVAILABLE_APPS.find(a => a.id === "instagram")
         ];
+
+        let selectedQuote = MINDFUL_QUOTES[0];
+        let currentLayout = "full"; // full, large, medium, quote
 
         // Timer & Countdown State
         let countdownTimer = null;
@@ -946,39 +1091,183 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const timeString = `${hours}:${minutes}`;
 
-            document.getElementById('status-clock').textContent = timeString;
-            document.getElementById('widget-time-display').textContent = timeString;
+            const statusClock = document.getElementById('status-clock');
+            if (statusClock) statusClock.textContent = timeString;
+
+            const timeEls = document.querySelectorAll('.live-time');
+            timeEls.forEach(el => el.textContent = timeString);
 
             const options = { weekday: 'long', day: 'numeric', month: 'long' };
             const dateString = now.toLocaleDateString('de-DE', options);
-            document.getElementById('widget-date-display').textContent = dateString;
+            const dateEls = document.querySelectorAll('.live-date');
+            dateEls.forEach(el => el.textContent = dateString);
+
+            const shortOptions = { day: 'numeric', month: 'short' };
+            const shortDateString = now.toLocaleDateString('de-DE', shortOptions);
+            const shortDateEls = document.querySelectorAll('.live-short-date');
+            shortDateEls.forEach(el => el.textContent = shortDateString);
         }
 
         setInterval(updateClock, 1000);
-        updateClock();
 
-        // Render Widget Apps List
-        function renderWidget() {
-            const container = document.getElementById('widget-slots-container');
-            container.innerHTML = '';
-
-            currentSlots.forEach((app, index) => {
-                const item = document.createElement('div');
-                item.className = 'widget-app-item';
-                item.onclick = (e) => {
-                    e.stopPropagation();
-                    handleAppClick(app);
-                };
-
-                item.innerHTML = `
-                    <span>${app.name}</span>
-                    ${app.isSocial ? '<span class="widget-app-tag">10s PAUSE</span>' : ''}
-                `;
-                container.appendChild(item);
-            });
+        // Layout Umschaltung
+        function selectLayout(layout) {
+            currentLayout = layout;
+            document.querySelectorAll('.layout-pill').forEach(pill => pill.classList.remove('active'));
+            event.target.classList.add('active');
+            renderWidgets();
         }
 
-        // Render Begleit-App Slot Editor
+        // Render Widgets auf dem Homescreen
+        function renderWidgets() {
+            const container = document.getElementById('widgets-display-container');
+            container.innerHTML = '';
+
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const timeString = `${hours}:${minutes}`;
+            const dateString = now.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+            const shortDateString = now.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' });
+
+            if (currentLayout === 'full' || currentLayout === 'large') {
+                // Large Launcher Widget
+                const largeWidget = document.createElement('div');
+                largeWidget.className = 'widget-card widget-large-view';
+
+                let appsHTML = currentSlots.map(app => `
+                    <div class="widget-app-item" onclick="handleAppClick('${app.id}')">
+                        <span>${app.name}</span>
+                        ${app.isSocial ? '<span class="widget-app-tag">10s PAUSE</span>' : ''}
+                    </div>
+                `).join('');
+
+                largeWidget.innerHTML = `
+                    <div class="widget-header">
+                        <div class="widget-date live-date">${dateString}</div>
+                        <div class="widget-time live-time">${timeString}</div>
+                    </div>
+                    <div class="widget-app-list">
+                        ${appsHTML}
+                    </div>
+                    <div class="widget-badge-label">Minimalist • .systemLarge</div>
+                `;
+                container.appendChild(largeWidget);
+            }
+
+            if (currentLayout === 'full' || currentLayout === 'quote') {
+                // Quote & Mindfulness Widget (.systemMedium)
+                const quoteWidget = document.createElement('div');
+                quoteWidget.className = 'widget-card widget-quote-view';
+                quoteWidget.innerHTML = `
+                    <div class="quote-header">
+                        <div class="widget-date live-date">${dateString}</div>
+                        <div style="font-size: 22px; font-weight: 200;" class="live-time">${timeString}</div>
+                    </div>
+                    <div class="quote-text">„${selectedQuote}“</div>
+                    <div class="widget-badge-label">Minimalist Zitat • .systemMedium</div>
+                `;
+                container.appendChild(quoteWidget);
+            }
+
+            if (currentLayout === 'medium') {
+                // Split Medium Launcher Widget (.systemMedium)
+                const mediumWidget = document.createElement('div');
+                mediumWidget.className = 'widget-card widget-medium-view';
+
+                let appsHTML = currentSlots.slice(0, 3).map(app => `
+                    <div class="widget-app-item" style="font-size: 16px;" onclick="handleAppClick('${app.id}')">
+                        <span>${app.name}</span>
+                        ${app.isSocial ? '<span class="widget-app-tag">10s</span>' : ''}
+                    </div>
+                `).join('');
+
+                mediumWidget.innerHTML = `
+                    <div class="widget-medium-left">
+                        <div class="widget-date live-short-date">${shortDateString}</div>
+                        <div style="font-size: 32px; font-weight: 200; line-height: 1.1;" class="live-time">${timeString}</div>
+                    </div>
+                    <div class="widget-medium-divider"></div>
+                    <div class="widget-medium-right">
+                        ${appsHTML}
+                    </div>
+                    <div class="widget-badge-label">Minimalist • .systemMedium</div>
+                `;
+                container.appendChild(mediumWidget);
+            }
+        }
+
+        // App-Klick Behandlung
+        function handleAppClick(appId) {
+            const app = AVAILABLE_APPS.find(a => a.id === appId);
+            if (!app) return;
+
+            if (app.isSocial) {
+                triggerMindfulPause(app.name, app.scheme);
+            } else {
+                showToast(`Öffne ${app.name}... (${app.scheme})`);
+                try {
+                    window.location.href = app.scheme;
+                } catch(e) {}
+            }
+        }
+
+        // Achtsamkeits-Pause starten
+        function triggerMindfulPause(appName, appScheme) {
+            activeTargetApp = { name: appName, scheme: appScheme };
+            document.getElementById('mindful-app-name').textContent = appName.toUpperCase();
+            
+            const mindfulView = document.getElementById('view-mindful');
+            mindfulView.classList.add('active');
+
+            remainingSeconds = 10;
+            const numberEl = document.getElementById('countdown-seconds');
+            const circleEl = document.getElementById('countdown-circle');
+            const continueBtn = document.getElementById('btn-continue-app');
+
+            numberEl.textContent = '10';
+            continueBtn.classList.remove('ready');
+            continueBtn.textContent = 'Weiter (10s)';
+            circleEl.style.transition = 'none';
+            circleEl.style.strokeDashoffset = '0';
+
+            setTimeout(() => {
+                circleEl.style.transition = 'stroke-dashoffset 10s linear';
+                circleEl.style.strokeDashoffset = `${CIRCLE_CIRCUMFERENCE}`;
+            }, 50);
+
+            if (countdownTimer) clearInterval(countdownTimer);
+
+            countdownTimer = setInterval(() => {
+                remainingSeconds--;
+                numberEl.textContent = remainingSeconds;
+                continueBtn.textContent = `Weiter (${remainingSeconds}s)`;
+
+                if (remainingSeconds <= 0) {
+                    clearInterval(countdownTimer);
+                    countdownTimer = null;
+                    continueBtn.classList.add('ready');
+                    continueBtn.textContent = `Weiter zu ${appName}`;
+                }
+            }, 1000);
+        }
+
+        function cancelMindfulPause() {
+            if (countdownTimer) clearInterval(countdownTimer);
+            document.getElementById('view-mindful').classList.remove('active');
+            showToast("Achtsamkeits-Pause: App nicht geöffnet 👏");
+        }
+
+        function continueToTargetApp() {
+            if (remainingSeconds > 0) return;
+            document.getElementById('view-mindful').classList.remove('active');
+            showToast(`Öffne jetzt ${activeTargetApp.name}...`);
+            try {
+                window.location.href = activeTargetApp.scheme;
+            } catch(e) {}
+        }
+
+        // Slot Editor in Begleit-App
         function renderAppEditor() {
             const editor = document.getElementById('app-slots-editor');
             editor.innerHTML = '';
@@ -1000,121 +1289,77 @@
                 `;
                 editor.appendChild(row);
             });
+
+            // Zitate Editor
+            const quoteEditor = document.getElementById('quotes-list-editor');
+            quoteEditor.innerHTML = '';
+            MINDFUL_QUOTES.forEach((quote) => {
+                const qItem = document.createElement('div');
+                qItem.className = `quote-select-item ${quote === selectedQuote ? 'active' : ''}`;
+                qItem.innerHTML = `
+                    <span>„${quote}“</span>
+                    ${quote === selectedQuote ? '<span>✓</span>' : ''}
+                `;
+                qItem.onclick = () => {
+                    selectedQuote = quote;
+                    renderAppEditor();
+                    renderWidgets();
+                    showToast("Achtsamkeits-Zitat aktualisiert");
+                };
+                quoteEditor.appendChild(qItem);
+            });
         }
 
         function updateSlot(slotIndex, appId) {
-            const selectedApp = AVAILABLE_APPS.find(a => a.id === appId);
-            if (selectedApp) {
-                currentSlots[slotIndex] = selectedApp;
-                renderWidget();
-                showToast(`Slot ${slotIndex + 1} auf '${selectedApp.name}' geändert`);
+            const newApp = AVAILABLE_APPS.find(a => a.id === appId);
+            if (newApp) {
+                currentSlots[slotIndex] = newApp;
+                renderWidgets();
+                showToast(`Slot ${slotIndex + 1} auf ${newApp.name} geändert`);
             }
         }
 
-        // Handle App Tap
-        function handleAppClick(app) {
-            if (app.isSocial) {
-                triggerMindfulPause(app.name, app.scheme);
-            } else {
-                showToast(`🚀 Öffnet ${app.name}...`);
-                if (isMobileDevice) {
-                    window.location.href = app.scheme;
-                }
-            }
-        }
-
-        // Trigger Mindful Pause
-        function triggerMindfulPause(appName, appScheme) {
-            activeTargetApp = { name: appName, scheme: appScheme };
-            document.getElementById('mindful-target-app').textContent = appName.toUpperCase();
-            
-            const mindfulView = document.getElementById('view-mindful');
-            mindfulView.classList.add('active');
-
-            startCountdown();
-        }
-
-        function startCountdown() {
-            clearInterval(countdownTimer);
-            remainingSeconds = 10;
-            
-            const countDisplay = document.getElementById('countdown-display');
-            const unitLabel = document.getElementById('countdown-unit-label');
-            const progressCircle = document.getElementById('progress-circle');
-            const continueBtn = document.getElementById('btn-continue-app');
-
-            countDisplay.textContent = remainingSeconds;
-            unitLabel.textContent = "SEKUNDEN";
-            continueBtn.classList.remove('ready');
-            continueBtn.textContent = "Weiter";
-            progressCircle.style.strokeDashoffset = '0';
-
-            countdownTimer = setInterval(() => {
-                remainingSeconds--;
-                countDisplay.textContent = remainingSeconds;
-                unitLabel.textContent = remainingSeconds === 1 ? "SEKUNDE" : "SEKUNDEN";
-
-                const progress = (10 - remainingSeconds) / 10;
-                const offset = CIRCLE_CIRCUMFERENCE * progress;
-                progressCircle.style.strokeDashoffset = -offset;
-
-                // Vibration / Haptik auf echtem Smartphone
-                if (navigator.vibrate) {
-                    navigator.vibrate(20);
-                }
-
-                if (remainingSeconds <= 0) {
-                    clearInterval(countdownTimer);
-                    continueBtn.classList.add('ready');
-                    continueBtn.textContent = `Weiter zu ${activeTargetApp ? activeTargetApp.name : 'App'}`;
-                    if (navigator.vibrate) {
-                        navigator.vibrate([40, 60, 40]);
-                    }
-                }
-            }, 1000);
-        }
-
-        function cancelMindfulPause() {
-            clearInterval(countdownTimer);
-            document.getElementById('view-mindful').classList.remove('active');
-            showToast("🛑 App-Start abgebrochen. Gute Entscheidung!");
-        }
-
-        function continueToTargetApp() {
-            clearInterval(countdownTimer);
-            document.getElementById('view-mindful').classList.remove('active');
-            showToast(`🚀 Ziel-App wird geöffnet: ${activeTargetApp ? activeTargetApp.scheme : ''}`);
-            if (activeTargetApp) {
-                window.location.href = activeTargetApp.scheme;
-            }
-        }
-
-        // View Switching
+        // View Umschaltung (Homescreen / App)
         function switchView(viewName) {
             document.querySelectorAll('.screen-view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
 
             if (viewName === 'homescreen') {
                 document.getElementById('view-homescreen').classList.add('active');
-                if (event && event.target) event.target.classList.add('active');
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
             } else if (viewName === 'app') {
                 document.getElementById('view-app').classList.add('active');
-                if (event && event.target) event.target.classList.add('active');
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
             }
         }
 
-        // Toast Feedback
+        // 1-Klick Download reines Schwarzbild (#000000) für iPhone
+        function downloadBlackWallpaper() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1179;
+            canvas.height = 2556;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const link = document.createElement('a');
+            link.download = 'Minimalist-Pitch-Black-Wallpaper.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast("4K Schwarzbild heruntergeladen! 🖤");
+        }
+
+        // Toast Helper
         function showToast(text) {
             const toast = document.getElementById('toast-message');
             toast.textContent = text;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2600);
+            setTimeout(() => toast.classList.remove('show'), 2200);
         }
 
-        // Initial setup
-        renderWidget();
+        // Initialisierung
+        updateClock();
+        renderWidgets();
         renderAppEditor();
     </script>
 </body>

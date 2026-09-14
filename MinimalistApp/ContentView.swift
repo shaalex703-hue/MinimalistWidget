@@ -5,26 +5,42 @@
 
 import SwiftUI
 
+enum PreviewWidgetType: String, CaseIterable, Identifiable {
+    case launcherLarge = "Launcher Groß"
+    case launcherMedium = "Launcher Mittel"
+    case launcherSmall = "Launcher Klein"
+    case quoteMedium = "Zitat Mittel"
+    case quoteSmall = "Zitat Klein"
+    
+    var id: String { rawValue }
+}
+
 struct ContentView: View {
-    // 5 konfigurierbare Slots (entspricht SelectFavoritesIntent)
+    // 6 konfigurierbare Slots (entspricht SelectFavoritesIntent)
     @State private var slot1: SystemApp = .phone
     @State private var slot2: SystemApp = .messages
-    @State private var slot3: SystemApp = .instagram
-    @State private var slot4: SystemApp = .notes
-    @State private var slot5: SystemApp = .calendar
+    @State private var slot3: SystemApp = .whatsapp
+    @State private var slot4: SystemApp = .spotify
+    @State private var slot5: SystemApp = .notes
+    @State private var slot6: SystemApp = .instagram
+    
+    @State private var selectedPreviewType: PreviewWidgetType = .launcherLarge
+    @State private var selectedQuote: String = MindfulQuote.quoteForToday().text
+    @State private var isBlackWallpaperSaved = false
     
     @StateObject private var interventionManager = InterventionManager.shared
     @Environment(\.openURL) private var openURL
     @State private var activeAlertMessage: String?
     
-    // Dynamische Favoritenliste basierend auf den 5 Slots
+    // Dynamische Favoritenliste basierend auf den Slots
     private var currentFavorites: [FavoriteApp] {
         [
             slot1.asFavoriteApp,
             slot2.asFavoriteApp,
             slot3.asFavoriteApp,
             slot4.asFavoriteApp,
-            slot5.asFavoriteApp
+            slot5.asFavoriteApp,
+            slot6.asFavoriteApp
         ]
     }
     
@@ -42,7 +58,7 @@ struct ContentView: View {
                             Text("Achtsamkeits-Pause Aktiv")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white)
-                            Text("Social-Media-Apps werden vor dem Öffnen 10 Sek. abgefangen.")
+                            Text("Social-Media-Apps werden vor dem Start 10 Sek. abgefangen.")
                                 .font(.system(size: 12))
                                 .foregroundColor(.gray)
                         }
@@ -52,26 +68,125 @@ struct ContentView: View {
                     .padding(14)
                     .background(Color(white: 0.08))
                     .cornerRadius(14)
-                    
-                    // MARK: - Live Vorschau des Widgets
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("LIVE WIDGET-VORSCHAU (.systemLarge)")
+
+                    // MARK: - 4-Schritte Anleitung zum Minimalist Phone
+                    VStack(alignment: .leading, spacing: 14) {
+                        Text("DEIN IPHONE ZUM MINIMALIST PHONE MACHEN")
                             .font(.system(size: 12, weight: .semibold, design: .monospaced))
                             .foregroundColor(.gray)
                             .padding(.horizontal, 4)
                         
+                        VStack(spacing: 10) {
+                            setupStepRow(
+                                number: "1",
+                                title: "Schwarzen Hintergrund setzen",
+                                desc: "Reines Schwarz (#000000) lässt die Widgets nahtlos mit dem OLED-Display verschmelzen."
+                            )
+                            setupStepRow(
+                                number: "2",
+                                title: "Icons vom Home-Bildschirm entfernen",
+                                desc: "Apps gedrückt halten ➔ 'Vom Home-Bildschirm entfernen'. Sie bleiben in der Mediathek verfügbar."
+                            )
+                            setupStepRow(
+                                number: "3",
+                                title: "Minimalist Widgets platzieren",
+                                desc: "Homescreen gedrückt halten ➔ '+' ➔ 'Minimalist' wählen ➔ Großes Launcher- & Zitat-Widget ablegen."
+                            )
+                            setupStepRow(
+                                number: "4",
+                                title: "Alles läuft über Widgets & Achtsamkeit",
+                                desc: "Öffne Apps direkt per Text-Tap. Social Media wird automatisch für 10 Sekunden entschleunigt."
+                            )
+                        }
+                        .padding(14)
+                        .background(Color(white: 0.08))
+                        .cornerRadius(14)
+                    }
+                    
+                    // MARK: - Live Vorschau aller Widgets
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("LIVE WIDGET-VORSCHAU")
+                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 4)
+                        
+                        // Segmented Picker für Widget-Typen
+                        Picker("Widget-Typ", selection: $selectedPreviewType) {
+                            ForEach(PreviewWidgetType.allCases) { type in
+                                Text(type.rawValue).tag(type)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        
+                        // Widget-Rahmen
                         ZStack {
                             RoundedRectangle(cornerRadius: 24, style: .continuous)
                                 .fill(Color.black)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                        .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                                        .stroke(Color.white.opacity(0.14), lineWidth: 1)
                                 )
                             
-                            MinimalistWidgetView(date: Date(), favorites: currentFavorites)
-                                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                            Group {
+                                switch selectedPreviewType {
+                                case .launcherLarge:
+                                    MinimalistWidgetView(date: Date(), favorites: currentFavorites)
+                                        .environment(\.widgetFamily, .systemLarge)
+                                        .frame(height: 330)
+                                case .launcherMedium:
+                                    MinimalistWidgetView(date: Date(), favorites: currentFavorites)
+                                        .environment(\.widgetFamily, .systemMedium)
+                                        .frame(height: 160)
+                                case .launcherSmall:
+                                    MinimalistWidgetView(date: Date(), favorites: currentFavorites)
+                                        .environment(\.widgetFamily, .systemSmall)
+                                        .frame(width: 160, height: 160)
+                                case .quoteMedium:
+                                    MinimalistQuoteWidgetView(date: Date(), quote: selectedQuote)
+                                        .environment(\.widgetFamily, .systemMedium)
+                                        .frame(height: 160)
+                                case .quoteSmall:
+                                    MinimalistQuoteWidgetView(date: Date(), quote: selectedQuote)
+                                        .environment(\.widgetFamily, .systemSmall)
+                                        .frame(width: 160, height: 160)
+                                }
+                            }
+                            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                         }
-                        .frame(height: 350)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 4)
+                    }
+                    
+                    // MARK: - Fokus-Zitate & Achtsamkeit
+                    VStack(alignment: .leading, spacing: 14) {
+                        Text("ACHTSAMKEITS-ZITATE FÜR DEIN PHONE")
+                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 4)
+                        
+                        VStack(spacing: 8) {
+                            ForEach(MindfulQuote.defaultQuotes) { quote in
+                                HStack {
+                                    Text(quote.text)
+                                        .font(.system(size: 14, weight: quote.text == selectedQuote ? .medium : .light))
+                                        .foregroundColor(quote.text == selectedQuote ? .white : Color.white.opacity(0.7))
+                                    
+                                    Spacer()
+                                    
+                                    if quote.text == selectedQuote {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .foregroundColor(.white)
+                                            .font(.system(size: 14))
+                                    }
+                                }
+                                .padding(12)
+                                .background(quote.text == selectedQuote ? Color.white.opacity(0.12) : Color(white: 0.08))
+                                .cornerRadius(10)
+                                .onTapGesture {
+                                    selectedQuote = quote.text
+                                }
+                            }
+                        }
                     }
                     
                     // MARK: - Schnelltest der Abfang-Routine
@@ -90,7 +205,7 @@ struct ContentView: View {
                         }
                     }
                     
-                    // MARK: - Slot-Konfiguration (Simuliert "Widget bearbeiten")
+                    // MARK: - Slot-Konfiguration
                     VStack(alignment: .leading, spacing: 14) {
                         Text("FAVORITEN-SLOTS KONFIGURIEREN")
                             .font(.system(size: 12, weight: .semibold, design: .monospaced))
@@ -103,77 +218,42 @@ struct ContentView: View {
                             slotPickerRow(title: "Slot 3", selection: $slot3)
                             slotPickerRow(title: "Slot 4", selection: $slot4)
                             slotPickerRow(title: "Slot 5", selection: $slot5)
+                            slotPickerRow(title: "Slot 6", selection: $slot6)
                         }
                         .padding(14)
                         .background(Color(white: 0.08))
                         .cornerRadius(14)
                     }
                     
-                    // MARK: - Deep Links der aktuellen Auswahl testen
-                    VStack(alignment: .leading, spacing: 14) {
-                        Text("DEEP LINKS DER AKTUELLEN AUSWAHL")
-                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                            .foregroundColor(.gray)
-                            .padding(.horizontal, 4)
-                        
-                        VStack(spacing: 10) {
-                            ForEach(currentFavorites) { app in
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        HStack(spacing: 6) {
-                                            Text(app.name)
-                                                .font(.system(size: 16, weight: .medium))
-                                                .foregroundColor(.white)
-                                            
-                                            if TimeWastingApps.isTimeWasting(url: app.url) {
-                                                Text("10s Pause")
-                                                    .font(.system(size: 10, weight: .semibold))
-                                                    .foregroundColor(.black)
-                                                    .padding(.horizontal, 6)
-                                                    .padding(.vertical, 2)
-                                                    .background(Color.white.opacity(0.85))
-                                                    .clipShape(Capsule())
-                                            }
-                                        }
-                                        
-                                        Text(app.urlScheme)
-                                            .font(.system(size: 12, design: .monospaced))
-                                            .foregroundColor(.gray)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    Button(action: {
-                                        openOrIntervene(appName: app.name, url: app.url)
-                                    }) {
-                                        Text("Öffnen")
-                                            .font(.system(size: 13, weight: .semibold))
-                                            .foregroundColor(.black)
-                                            .padding(.horizontal, 14)
-                                            .padding(.vertical, 6)
-                                            .background(Color.white)
-                                            .clipShape(Capsule())
-                                    }
-                                }
-                                .padding(12)
-                                .background(Color(white: 0.08))
-                                .cornerRadius(12)
-                            }
-                        }
-                    }
-                    
-                    // MARK: - Anleitung zur Funktionsweise
+                    // MARK: - Tiefschwarzes Wallpaper Tool
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("WIE DIE ABFANG-ROUTINE FUNKTIONIERT")
+                        Text("TIEFSCHWARZES WALLPAPER")
                             .font(.system(size: 12, weight: .semibold, design: .monospaced))
                             .foregroundColor(.gray)
                             .padding(.horizontal, 4)
                         
-                        VStack(alignment: .leading, spacing: 10) {
-                            stepRow(number: "1", text: "Tippst du im Widget auf eine Social-Media-App, leitet das Widget über 'minimalist://intervene' zuerst in unsere App weiter.")
-                            stepRow(number: "2", text: "Der vollflächige schwarze Zwischenscreen erscheint mit 10-Sekunden Countdown-Kreis.")
-                            stepRow(number: "3", text: "'Abbrechen' schließt den Screen sofort, ohne die App zu öffnen.")
-                            stepRow(number: "4", text: "'Weiter' wird erst nach Ablauf der 10 Sekunden aktiv und öffnet dann die Ziel-App.")
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Reines Schwarz (#000000)")
+                                    .font(.system(size: 15, weight: .medium))
+                                    .foregroundColor(.white)
+                                Text("Lässt deine Widgets nahtlos mit dem iPhone-Display verschmelzen.")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.gray)
+                            }
+                            Spacer()
+                            
+                            Button(action: {
+                                activeAlertMessage = "Tipp: Öffne dein iPhone-Fotoalbum oder wähle in Einstellungen ➔ Hintergrundbild einfach die reine schwarze Farboption aus!"
+                            }) {
+                                Text("Info")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(.black)
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 8)
+                                    .background(Color.white)
+                                    .clipShape(Capsule())
+                            }
                         }
                         .padding(16)
                         .background(Color(white: 0.08))
@@ -183,12 +263,10 @@ struct ContentView: View {
                 .padding(20)
             }
             .background(Color(white: 0.03).ignoresSafeArea())
-            .navigationTitle("Minimalist Widget")
-            // Eingehende Deep Links aus Widget verarbeiten
+            .navigationTitle("Minimalist Phone")
             .onOpenURL { incomingURL in
                 interventionManager.handleIncomingURL(incomingURL)
             }
-            // Vollflächiger Achtsamkeits-Zwischenscreen
             .fullScreenCover(isPresented: $interventionManager.isInterventionActive) {
                 MindfulPauseView(
                     targetAppName: interventionManager.targetAppName,
@@ -209,19 +287,29 @@ struct ContentView: View {
         }
     }
     
-    // MARK: - Öffnen oder Abfangen
-    private func openOrIntervene(appName: String, url: URL) {
-        if TimeWastingApps.isTimeWasting(url: url) {
-            interventionManager.triggerIntervention(appName: appName, targetURL: url)
-        } else {
-            openURL(url) { success in
-                if !success {
-                    activeAlertMessage = "Konnte '\(url.absoluteString)' nicht öffnen. Bitte prüfe, ob die App installiert ist."
-                }
+    private func setupStepRow(number: String, title: String, desc: String) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            Text(number)
+                .font(.system(size: 13, weight: .bold, design: .monospaced))
+                .foregroundColor(.black)
+                .frame(width: 22, height: 22)
+                .background(Color.white)
+                .clipShape(Circle())
+            
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.white)
+                Text(desc)
+                    .font(.system(size: 12))
+                    .foregroundColor(Color.white.opacity(0.6))
+                    .lineSpacing(2)
             }
+            Spacer()
         }
+        .padding(.vertical, 2)
     }
-    
+
     private func socialMediaTestRow(name: String, scheme: String) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
@@ -243,7 +331,7 @@ struct ContentView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "hourglass")
                         .font(.system(size: 12))
-                    Text("Pause testen")
+                    Text("10s Pause")
                         .font(.system(size: 13, weight: .semibold))
                 }
                 .foregroundColor(.black)
@@ -275,21 +363,6 @@ struct ContentView: View {
             .tint(.white)
         }
         .padding(.vertical, 4)
-    }
-    
-    private func stepRow(number: String, text: String) -> some View {
-        HStack(alignment: .top, spacing: 12) {
-            Text(number)
-                .font(.system(size: 12, weight: .bold))
-                .foregroundColor(.black)
-                .frame(width: 22, height: 22)
-                .background(Color.white)
-                .clipShape(Circle())
-            
-            Text(text)
-                .font(.system(size: 14, weight: .regular))
-                .foregroundColor(.white.opacity(0.85))
-        }
     }
 }
 

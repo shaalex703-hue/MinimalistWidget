@@ -35,6 +35,8 @@ public enum SystemApp: String, CaseIterable, AppEnum, Sendable {
     case youtube = "youtube"
     case twitter = "twitter"
     case reddit = "reddit"
+    case whatsapp = "whatsapp"
+    case spotify = "spotify"
 
     // MARK: - AppEnum Repräsentation
     public static var typeDisplayRepresentation: TypeDisplayRepresentation = "System-App"
@@ -64,7 +66,9 @@ public enum SystemApp: String, CaseIterable, AppEnum, Sendable {
         .tiktok: DisplayRepresentation(title: "TikTok", subtitle: "tiktok:// (Mit Pause)"),
         .youtube: DisplayRepresentation(title: "YouTube", subtitle: "youtube:// (Mit Pause)"),
         .twitter: DisplayRepresentation(title: "X / Twitter", subtitle: "x:// (Mit Pause)"),
-        .reddit: DisplayRepresentation(title: "Reddit", subtitle: "reddit:// (Mit Pause)")
+        .reddit: DisplayRepresentation(title: "Reddit", subtitle: "reddit:// (Mit Pause)"),
+        .whatsapp: DisplayRepresentation(title: "WhatsApp", subtitle: "whatsapp://"),
+        .spotify: DisplayRepresentation(title: "Spotify", subtitle: "spotify://")
     ]
 
     // MARK: - Lesbarer Anzeigename
@@ -95,6 +99,8 @@ public enum SystemApp: String, CaseIterable, AppEnum, Sendable {
         case .youtube: return "YouTube"
         case .twitter: return "X / Twitter"
         case .reddit: return "Reddit"
+        case .whatsapp: return "WhatsApp"
+        case .spotify: return "Spotify"
         }
     }
 
@@ -126,6 +132,8 @@ public enum SystemApp: String, CaseIterable, AppEnum, Sendable {
         case .youtube: return "youtube://"
         case .twitter: return "x://"
         case .reddit: return "reddit://"
+        case .whatsapp: return "whatsapp://"
+        case .spotify: return "spotify://"
         }
     }
 
@@ -143,7 +151,7 @@ public enum SystemApp: String, CaseIterable, AppEnum, Sendable {
 @available(iOS 17.0, *)
 public struct SelectFavoritesIntent: WidgetConfigurationIntent {
     public static var title: LocalizedStringResource = "Favoriten auswählen"
-    public static var description: IntentDescription = IntentDescription("Wähle die Apps für die 5 Favoriten-Slots deines Widgets.")
+    public static var description: IntentDescription = IntentDescription("Wähle die Apps für die Favoriten-Slots deines Widgets.")
 
     @Parameter(title: "Slot 1", default: .phone)
     public var slot1: SystemApp
@@ -160,31 +168,63 @@ public struct SelectFavoritesIntent: WidgetConfigurationIntent {
     @Parameter(title: "Slot 5", default: .calendar)
     public var slot5: SystemApp
 
+    @Parameter(title: "Slot 6 (für großes Widget)", default: .safari)
+    public var slot6: SystemApp
+
     public init() {
         self.slot1 = .phone
         self.slot2 = .messages
         self.slot3 = .camera
         self.slot4 = .notes
         self.slot5 = .calendar
+        self.slot6 = .safari
     }
 
-    public init(slot1: SystemApp, slot2: SystemApp, slot3: SystemApp, slot4: SystemApp, slot5: SystemApp) {
+    public init(slot1: SystemApp, slot2: SystemApp, slot3: SystemApp, slot4: SystemApp, slot5: SystemApp, slot6: SystemApp = .safari) {
         self.slot1 = slot1
         self.slot2 = slot2
         self.slot3 = slot3
         self.slot4 = slot4
         self.slot5 = slot5
+        self.slot6 = slot6
     }
 
-    /// Löst die 5 ausgewählten Apps als Array auf
+    /// Löst die konfigurierten Apps als Array auf
     public func resolveFavorites() -> [FavoriteApp] {
         return [
             slot1.asFavoriteApp,
             slot2.asFavoriteApp,
             slot3.asFavoriteApp,
             slot4.asFavoriteApp,
-            slot5.asFavoriteApp
+            slot5.asFavoriteApp,
+            slot6.asFavoriteApp
         ]
+    }
+}
+
+// MARK: - SelectQuoteIntent für das Achtsamkeits- und Zitat-Widget
+@available(iOS 17.0, *)
+public struct SelectQuoteIntent: WidgetConfigurationIntent {
+    public static var title: LocalizedStringResource = "Achtsamkeits-Zitat anpassen"
+    public static var description: IntentDescription = IntentDescription("Wähle ein eigenes Fokus-Zitat oder lasse es täglich automatisch wechseln.")
+
+    @Parameter(title: "Eigenes Zitat (optional)", default: "")
+    public var customQuote: String
+
+    public init() {
+        self.customQuote = ""
+    }
+
+    public init(customQuote: String) {
+        self.customQuote = customQuote
+    }
+
+    public func resolveQuote() -> String {
+        let trimmed = customQuote.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmed.isEmpty {
+            return trimmed
+        }
+        return MindfulQuote.quoteForToday().text
     }
 }
 
