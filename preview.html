@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MinimalistWidget & App Simulator</title>
+    <style>
+        :root {
+            --bg-canvas: #0c0d10;
+            --iphone-frame: #1e2025;
+            --iphone-bezel: #090a0c;
+            --iphone-screen: #000000;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.65);
+            --text-tertiary: rgba(255, 255, 255, 0.4);
+            --accent-border: rgba(255, 255, 255, 0.12);
+            --card-bg: rgba(255, 255, 255, 0.07);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+        }
+
+        body {
+            background: var(--bg-canvas);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 24px 16px;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 20%, #171b26 0%, #0c0d10 70%);
+        }
+
+        /* Top Header */
+        header.top-bar {
+            text-align: center;
+            margin-bottom: 24px;
+            max-width: 600px;
+        }
+
+        header.top-bar h1 {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        header.top-bar p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Main Workspace Container */
+        .workspace {
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+            justify-content: center;
+            max-width: 1100px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        /* Mode Switcher Tabs */
+        .tab-controls {
+            display: flex;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            padding: 4px;
+            gap: 4px;
+            margin-bottom: 20px;
+            border: 1px solid var(--accent-border);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            background: #ffffff;
+            color: #000000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        /* iPhone Mockup Frame */
+        .iphone-wrapper {
+            position: relative;
+            width: 380px;
+            height: 770px;
+            background: var(--iphone-bezel);
+            border-radius: 54px;
+            padding: 12px;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 
+                        0 0 0 2px rgba(255, 255, 255, 0.15),
+                        inset 0 0 4px rgba(255, 255, 255, 0.3);
+            flex-shrink: 0;
+        }
+
+        .iphone-screen {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            border-radius: 44px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Dynamic Island */
+        .dynamic-island {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: 28px;
+            background: #000000;
+            border-radius: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
+        }
+
+        .camera-lens {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #081120;
+            box-shadow: inset 0 0 2px #264a7f;
+            margin-left: auto;
+        }
+
+        /* iOS Status Bar */
+        .status-bar {
+            height: 44px;
+            padding: 12px 26px 0 26px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffffff;
+            z-index: 90;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            font-size: 11px;
+        }
+
+        /* View: Homescreen Container */
+        .screen-view {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .screen-view.active {
+            display: flex;
+        }
+
+        /* Homescreen Wallpaper & Grid */
+        #view-homescreen {
+            background: radial-gradient(circle at 50% 10%, #15161b 0%, #050608 80%);
+            padding: 16px 18px;
+        }
+
+        /* Minimalist Large Widget (.systemLarge) */
+        .widget-large {
+            width: 100%;
+            height: 330px;
+            background: #000000;
+            border-radius: 26px;
+            padding: 26px 22px 20px 22px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .widget-large:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 35px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255,255,255,0.2);
+        }
+
+        .widget-large:active {
+            transform: scale(0.985);
+        }
+
+        /* Widget Header */
+        .widget-header {
+            margin-bottom: 24px;
+        }
+
+        .widget-date {
+            font-size: 13.5px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.65);
+            margin-bottom: 3px;
+        }
+
+        .widget-time {
+            font-size: 40px;
+            font-weight: 200;
+            letter-spacing: -1px;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        /* Widget Apps List */
+        .widget-app-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px; /* Genau Vorgabe: spacing: 18 */
+        }
+
+        .widget-app-item {
+            font-size: 18px; /* Genau Vorgabe: size: 18 */
+            font-weight: 300; /* Genau Vorgabe: weight: .light */
+            color: #ffffff; /* Genau Vorgabe: reiner weißer Text */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            transition: opacity 0.15s ease, transform 0.1s ease;
+            cursor: pointer;
+        }
+
+        .widget-app-item:hover {
+            opacity: 0.8;
+            transform: translateX(3px);
+        }
+
+        .widget-app-tag {
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .widget-hint {
+            position: absolute;
+            bottom: 10px;
+            right: 14px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+        }
+
+        /* Homescreen Dummies */
+        .homescreen-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 28px;
+            padding: 0 4px;
+        }
+
+        .dummy-app {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dummy-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 13px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .dummy-name {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* View: Begleit-App (ContentView) */
+        #view-app {
+            background: #08080a;
+            padding: 18px 16px 40px 16px;
+        }
+
+        .app-nav-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .section-box {
+            background: #14151a;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid var(--accent-border);
+        }
+
+        .section-header {
+            font-size: 11px;
+            font-weight: 600;
+            color: #888892;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .slot-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .slot-row:last-child {
+            border-bottom: none;
+        }
+
+        .slot-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .slot-select {
+            background: #23252d;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .test-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .test-row:last-child {
+            border-bottom: none;
+        }
+
+        .test-btn {
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 999px;
+            padding: 5px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .test-btn:hover {
+            background: #e0e0e0;
+            transform: scale(1.03);
+        }
+
+        /* View: Achtsamkeits-Zwischenscreen (MindfulPauseView) */
+        #view-mindful {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 70px 24px 44px 24px;
+            text-align: center;
+            animation: fadeIn 0.25s ease forwards;
+        }
+
+        #view-mindful.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .mindful-app-badge {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+        }
+
+        .countdown-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .countdown-svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .countdown-bg-ring {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 3.5;
+        }
+
+        .countdown-progress-ring {
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 3.5;
+            stroke-linecap: round;
+            stroke-dasharray: 408;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .countdown-digits {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .countdown-number {
+            font-size: 54px;
+            font-weight: 200;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .countdown-unit {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+        }
+
+        .mindful-text {
+            font-size: 20px;
+            font-weight: 300;
+            line-height: 1.45;
+            color: #ffffff;
+            max-width: 290px;
+            margin: 0 auto;
+        }
+
+        .mindful-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .btn-continue {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.25);
+            pointer-events: none;
+        }
+
+        .btn-continue.ready {
+            background: #ffffff;
+            color: #000000;
+            pointer-events: auto;
+            box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            font-weight: 300;
+            padding: 12px;
+            cursor: pointer;
+        }
+
+        .btn-cancel:hover {
+            color: #ffffff;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(50px);
+            background: rgba(30, 32, 40, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 400;
+            opacity: 0;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 300;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Sidebar Control Panel */
+        .control-panel {
+            flex: 1;
+            min-width: 320px;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--accent-border);
+            border-radius: 20px;
+            padding: 22px;
+        }
+
+        .panel-card h2 {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-card p {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .badge {
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 3px 8px;
+            border-radius: 6px;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .instructions-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .instructions-list li {
+            display: flex;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .num-circle {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            color: #000;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-bar">
+        <h1>MinimalistWidget Simulator (PC)</h1>
+        <p>Interaktive Vorschau deines iOS WidgetKit Targets & der Haupt-App direkt im Browser auf Windows.</p>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="tab-controls">
+        <button class="tab-btn active" onclick="switchView('homescreen')">📱 Home-Bildschirm & Widget</button>
+        <button class="tab-btn" onclick="switchView('app')">⚙️ Minimalist Begleit-App</button>
+        <button class="tab-btn" onclick="triggerMindfulPause('Instagram', 'instagram://')">⏳ Achtsamkeits-Pause (Test)</button>
+    </div>
+
+    <div class="workspace">
+
+        <!-- iPhone Hardware Mockup -->
+        <div class="iphone-wrapper">
+            <div class="iphone-screen">
+                
+                <!-- Dynamic Island -->
+                <div class="dynamic-island">
+                    <div class="camera-lens"></div>
+                </div>
+
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <span id="status-clock">12:24</span>
+                    <div class="status-icons">
+                        <span>5G</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+
+                <!-- View 1: Homescreen with Large Widget -->
+                <div id="view-homescreen" class="screen-view active">
+                    
+                    <!-- The MinimalistWidget .systemLarge -->
+                    <div class="widget-large" id="main-widget" title="Klicke auf eine App oder halte gedrückt">
+                        <div class="widget-header">
+                            <div class="widget-date" id="widget-date-display">Montag, 14. September</div>
+                            <div class="widget-time" id="widget-time-display">12:24</div>
+                        </div>
+
+                        <!-- 5 Apps in VStack(alignment: .leading, spacing: 18) -->
+                        <div class="widget-app-list" id="widget-slots-container">
+                            <!-- Injected via JavaScript -->
+                        </div>
+
+                        <div class="widget-hint">MinimalistWidget • .systemLarge</div>
+                    </div>
+
+                    <!-- Dummy Homescreen App Icons -->
+                    <div class="homescreen-row">
+                        <div class="dummy-app">
+                            <div class="dummy-icon">⚙️</div>
+                            <div class="dummy-name">Einstellungen</div>
+                        </div>
+                        <div class="dummy-app">
+                            <div class="dummy-icon">📁</div>
+                            <div class="dummy-name">Dateien</div>
+                        </div>
+                        <div class="dummy-app">
+                            <div class="dummy-icon">🧭</div>
+                            <div class="dummy-name">Safari</div>
+                        </div>
+                        <div class="dummy-app">
+                            <div class="dummy-icon">⛅</div>
+                            <div class="dummy-name">Wetter</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- View 2: Begleit-App (ContentView) -->
+                <div id="view-app" class="screen-view">
+                    <div class="app-nav-title">Minimalist Widget</div>
+
+                    <!-- Abfang-Routine Banner -->
+                    <div class="section-box" style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-size:22px;">⏳</span>
+                        <div>
+                            <div style="font-size:14px; font-weight:600;">Achtsamkeits-Pause aktiv</div>
+                            <div style="font-size:12px; color:var(--text-secondary);">Social Media Apps werden vor dem Start 10s verzögert.</div>
+                        </div>
+                    </div>
+
+                    <!-- Slot Konfiguration -->
+                    <div class="section-box">
+                        <div class="section-header">Favoriten-Slots (SelectFavoritesIntent)</div>
+                        <div id="app-slots-editor">
+                            <!-- Injected via JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Deep Link Schnelltest -->
+                    <div class="section-box">
+                        <div class="section-header">Social-Media Abfang-Routine testen</div>
+                        <div class="test-row">
+                            <div>
+                                <div style="font-size:14px; font-weight:500;">Instagram</div>
+                                <div style="font-size:11px; color:#888;">instagram://</div>
+                            </div>
+                            <button class="test-btn" onclick="triggerMindfulPause('Instagram', 'instagram://')">10s Test</button>
+                        </div>
+                        <div class="test-row">
+                            <div>
+                                <div style="font-size:14px; font-weight:500;">TikTok</div>
+                                <div style="font-size:11px; color:#888;">tiktok://</div>
+                            </div>
+                            <button class="test-btn" onclick="triggerMindfulPause('TikTok', 'tiktok://')">10s Test</button>
+                        </div>
+                        <div class="test-row">
+                            <div>
+                                <div style="font-size:14px; font-weight:500;">YouTube</div>
+                                <div style="font-size:11px; color:#888;">youtube://</div>
+                            </div>
+                            <button class="test-btn" onclick="triggerMindfulPause('YouTube', 'youtube://')">10s Test</button>
+                        </div>
+                        <div class="test-row">
+                            <div>
+                                <div style="font-size:14px; font-weight:500;">X / Twitter</div>
+                                <div style="font-size:11px; color:#888;">x://</div>
+                            </div>
+                            <button class="test-btn" onclick="triggerMindfulPause('X / Twitter', 'x://')">10s Test</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View 3: Achtsamkeits-Zwischenscreen (MindfulPauseView) -->
+                <div id="view-mindful">
+                    <div class="mindful-app-badge" id="mindful-target-app">INSTAGRAM</div>
+
+                    <div>
+                        <!-- Animated Circular Countdown -->
+                        <div class="countdown-container">
+                            <svg class="countdown-svg" viewBox="0 0 140 140">
+                                <circle class="countdown-bg-ring" cx="70" cy="70" r="65"></circle>
+                                <circle class="countdown-progress-ring" id="progress-circle" cx="70" cy="70" r="65"></circle>
+                            </svg>
+                            <div class="countdown-digits">
+                                <div class="countdown-number" id="countdown-display">10</div>
+                                <div class="countdown-unit" id="countdown-unit-label">SEKUNDEN</div>
+                            </div>
+                        </div>
+
+                        <!-- User prompt exact text -->
+                        <p class="mindful-text">
+                            Nimm dir einen Moment Zeit. Musst du diese App jetzt wirklich öffnen?
+                        </p>
+                    </div>
+
+                    <!-- Two Action Buttons -->
+                    <div class="mindful-actions">
+                        <button class="btn-continue" id="btn-continue-app" onclick="continueToTargetApp()">Weiter</button>
+                        <button class="btn-cancel" onclick="cancelMindfulPause()">Abbrechen</button>
+                    </div>
+                </div>
+
+                <!-- Toast Notification -->
+                <div class="toast" id="toast-message">Aktion ausgeführt</div>
+
+            </div>
+        </div>
+
+        <!-- Sidebar Info & Controls -->
+        <div class="control-panel">
+            
+            <div class="panel-card">
+                <h2>💡 Wie du auf dem PC testest</h2>
+                <p>Du kannst das gesamte Widget-Verhalten, die 5 Favoriten-Slots und den 10-Sekunden-Zwischenscreen direkt in diesem Simulator ausprobieren:</p>
+                
+                <ul class="instructions-list">
+                    <li>
+                        <div class="num-circle">1</div>
+                        <div><strong>Direktes Öffnen:</strong> Klicke im Widget auf <em>Telefon</em>, <em>Nachrichten</em> oder <em>Kalender</em> ➔ Öffnet direkt per URL-Scheme.</div>
+                    </li>
+                    <li>
+                        <div class="num-circle">2</div>
+                        <div><strong>Abfang-Routine:</strong> Wähle oder klicke auf eine Social-Media-App (z. B. <em>Instagram</em>) ➔ Der 10-Sekunden-Countdown startet vollflächig.</div>
+                    </li>
+                    <li>
+                        <div class="num-circle">3</div>
+                        <div><strong>Slots anpassen:</strong> Wechsle auf den Tab <em>„Minimalist Begleit-App“</em> und ändere Slot 1 bis 5. Das Widget auf dem Homescreen aktualisiert sich sofort.</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="panel-card">
+                <h2>📱 Echtes iPhone & Mac Testing</h2>
+                <p>Um die Swift-Quelldateien auf einem echten iPhone oder im offiziellen Apple Simulator zu starten:</p>
+                <ul class="instructions-list">
+                    <li>
+                        <span class="badge">Mac & Xcode</span>
+                        <div>Kopiere den Ordner auf einen Mac und öffne <code>MinimalistWidget.xcodeproj</code>. Drücke <strong>⌘ + R</strong>.</div>
+                    </li>
+                    <li>
+                        <span class="badge">Kein Mac?</span>
+                        <div>Du kannst Cloud-Dienste wie <strong>MacInCloud</strong> oder <strong>Codemagic</strong> nutzen, um die App ohne lokalen Mac für dein iPhone zu signieren.</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="panel-card">
+                <h2>✨ Widget-Spezifikationen</h2>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:12px;">
+                    <div><strong>Größe:</strong> .systemLarge</div>
+                    <div><strong>Hintergrund:</strong> Reines Schwarz</div>
+                    <div><strong>Typografie:</strong> SF Light (18pt)</div>
+                    <div><strong>Abstand:</strong> VStack spacing: 18</div>
+                    <div><strong>Konfiguration:</strong> SelectFavoritesIntent</div>
+                    <div><strong>Intervention:</strong> 10s Countdown</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // Verfügbare System-Apps & URL-Schemes (aus SelectFavoritesIntent.swift)
+        const AVAILABLE_APPS = [
+            { id: "phone", name: "Telefon", scheme: "tel://", isSocial: false },
+            { id: "messages", name: "Nachrichten", scheme: "messages://", isSocial: false },
+            { id: "facetime", name: "FaceTime", scheme: "facetime://", isSocial: false },
+            { id: "calendar", name: "Kalender", scheme: "calshow://", isSocial: false },
+            { id: "camera", name: "Kamera", scheme: "camera://", isSocial: false },
+            { id: "notes", name: "Notizen", scheme: "mobilenotes://", isSocial: false },
+            { id: "photos", name: "Fotos", scheme: "photos-redirect://", isSocial: false },
+            { id: "mail", name: "Mail", scheme: "message://", isSocial: false },
+            { id: "maps", name: "Karten", scheme: "maps://", isSocial: false },
+            { id: "music", name: "Musik", scheme: "music://", isSocial: false },
+            { id: "reminders", name: "Erinnerungen", scheme: "x-apple-reminderkit://", isSocial: false },
+            { id: "settings", name: "Einstellungen", scheme: "app-prefs://", isSocial: false },
+            { id: "clock", name: "Uhr", scheme: "clock-alarm://", isSocial: false },
+            { id: "shortcuts", name: "Kurzbefehle", scheme: "shortcuts://", isSocial: false },
+            { id: "safari", name: "Safari", scheme: "https://apple.com", isSocial: false },
+            { id: "instagram", name: "Instagram", scheme: "instagram://", isSocial: true },
+            { id: "tiktok", name: "TikTok", scheme: "tiktok://", isSocial: true },
+            { id: "youtube", name: "YouTube", scheme: "youtube://", isSocial: true },
+            { id: "twitter", name: "X / Twitter", scheme: "x://", isSocial: true },
+            { id: "reddit", name: "Reddit", scheme: "reddit://", isSocial: true }
+        ];
+
+        // Aktuelle Belegung der 5 Favoriten-Slots
+        let currentSlots = [
+            AVAILABLE_APPS.find(a => a.id === "phone"),
+            AVAILABLE_APPS.find(a => a.id === "messages"),
+            AVAILABLE_APPS.find(a => a.id === "instagram"), // Social Media zum direkten Testen
+            AVAILABLE_APPS.find(a => a.id === "notes"),
+            AVAILABLE_APPS.find(a => a.id === "calendar")
+        ];
+
+        // Timer & Countdown State
+        let countdownTimer = null;
+        let remainingSeconds = 10;
+        let activeTargetApp = null;
+        const CIRCLE_CIRCUMFERENCE = 408; // 2 * pi * 65
+
+        // Live Clock & Date Update
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const timeString = `${hours}:${minutes}`;
+
+            document.getElementById('status-clock').textContent = timeString;
+            document.getElementById('widget-time-display').textContent = timeString;
+
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            const dateString = now.toLocaleDateString('de-DE', options);
+            document.getElementById('widget-date-display').textContent = dateString;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Render Widget Apps List
+        function renderWidget() {
+            const container = document.getElementById('widget-slots-container');
+            container.innerHTML = '';
+
+            currentSlots.forEach((app, index) => {
+                const item = document.createElement('div');
+                item.className = 'widget-app-item';
+                item.onclick = (e) => {
+                    e.stopPropagation();
+                    handleAppClick(app);
+                };
+
+                item.innerHTML = `
+                    <span>${app.name}</span>
+                    ${app.isSocial ? '<span class="widget-app-tag">10s PAUSE</span>' : ''}
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Render Begleit-App Slot Editor
+        function renderAppEditor() {
+            const editor = document.getElementById('app-slots-editor');
+            editor.innerHTML = '';
+
+            currentSlots.forEach((currentApp, slotIndex) => {
+                const row = document.createElement('div');
+                row.className = 'slot-row';
+
+                let selectOptions = AVAILABLE_APPS.map(app => {
+                    const isSelected = app.id === currentApp.id ? 'selected' : '';
+                    return `<option value="${app.id}" ${isSelected}>${app.name} (${app.scheme})</option>`;
+                }).join('');
+
+                row.innerHTML = `
+                    <div class="slot-label">Slot ${slotIndex + 1}</div>
+                    <select class="slot-select" onchange="updateSlot(${slotIndex}, this.value)">
+                        ${selectOptions}
+                    </select>
+                `;
+                editor.appendChild(row);
+            });
+        }
+
+        function updateSlot(slotIndex, appId) {
+            const selectedApp = AVAILABLE_APPS.find(a => a.id === appId);
+            if (selectedApp) {
+                currentSlots[slotIndex] = selectedApp;
+                renderWidget();
+                showToast(`Slot ${slotIndex + 1} auf '${selectedApp.name}' geändert`);
+            }
+        }
+
+        // Handle App Tap from Widget or List
+        function handleAppClick(app) {
+            if (app.isSocial) {
+                triggerMindfulPause(app.name, app.scheme);
+            } else {
+                showToast(`🚀 Öffnet ${app.scheme} (${app.name})`);
+            }
+        }
+
+        // Trigger Mindful Pause
+        function triggerMindfulPause(appName, appScheme) {
+            activeTargetApp = { name: appName, scheme: appScheme };
+            document.getElementById('mindful-target-app').textContent = appName.toUpperCase();
+            
+            const mindfulView = document.getElementById('view-mindful');
+            mindfulView.classList.add('active');
+
+            startCountdown();
+        }
+
+        function startCountdown() {
+            clearInterval(countdownTimer);
+            remainingSeconds = 10;
+            
+            const countDisplay = document.getElementById('countdown-display');
+            const unitLabel = document.getElementById('countdown-unit-label');
+            const progressCircle = document.getElementById('progress-circle');
+            const continueBtn = document.getElementById('btn-continue-app');
+
+            countDisplay.textContent = remainingSeconds;
+            unitLabel.textContent = "SEKUNDEN";
+            continueBtn.classList.remove('ready');
+            progressCircle.style.strokeDashoffset = '0';
+
+            countdownTimer = setInterval(() => {
+                remainingSeconds--;
+                countDisplay.textContent = remainingSeconds;
+                unitLabel.textContent = remainingSeconds === 1 ? "SEKUNDE" : "SEKUNDEN";
+
+                // Progress Offset berechnen
+                const progress = (10 - remainingSeconds) / 10;
+                const offset = CIRCLE_CIRCUMFERENCE * progress;
+                progressCircle.style.strokeDashoffset = -offset;
+
+                if (remainingSeconds <= 0) {
+                    clearInterval(countdownTimer);
+                    continueBtn.classList.add('ready');
+                    continueBtn.textContent = `Weiter zu ${activeTargetApp ? activeTargetApp.name : 'App'}`;
+                }
+            }, 1000);
+        }
+
+        function cancelMindfulPause() {
+            clearInterval(countdownTimer);
+            document.getElementById('view-mindful').classList.remove('active');
+            showToast("🛑 App-Start abgebrochen. Gute Entscheidung!");
+        }
+
+        function continueToTargetApp() {
+            clearInterval(countdownTimer);
+            document.getElementById('view-mindful').classList.remove('active');
+            showToast(`🚀 Ziel-App geöffnet: ${activeTargetApp ? activeTargetApp.scheme : ''}`);
+        }
+
+        // View Switching
+        function switchView(viewName) {
+            document.querySelectorAll('.screen-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+            if (viewName === 'homescreen') {
+                document.getElementById('view-homescreen').classList.add('active');
+                event.target.classList.add('active');
+            } else if (viewName === 'app') {
+                document.getElementById('view-app').classList.add('active');
+                event.target.classList.add('active');
+            }
+        }
+
+        // Toast Feedback
+        function showToast(text) {
+            const toast = document.getElementById('toast-message');
+            toast.textContent = text;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2600);
+        }
+
+        // Initial setup
+        renderWidget();
+        renderAppEditor();
+    </script>
+</body>
+</html>

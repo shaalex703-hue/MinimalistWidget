@@ -1,0 +1,43 @@
+name: iOS Build (MinimalistWidget)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Widget & App on Apple macOS
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Select Xcode Version
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+
+      - name: Build MinimalistApp & Widget Extension
+        run: |
+          xcodebuild clean build \
+            -project MinimalistWidget.xcodeproj \
+            -scheme MinimalistApp \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Compress Build Artifacts
+        run: |
+          mkdir -p output
+          cd build/Build/Products/Debug-iphonesimulator
+          zip -r ../../../../output/MinimalistApp-Simulator.zip MinimalistApp.app
+          cd ../../../..
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: MinimalistApp-iOS-Build
+          path: output/MinimalistApp-Simulator.zip
+          retention-days: 14
