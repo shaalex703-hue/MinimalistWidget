@@ -5,7 +5,6 @@
 
 import WidgetKit
 import SwiftUI
-import AppIntents
 
 // MARK: - Timeline Entry
 public struct MinimalistEntry: TimelineEntry {
@@ -18,11 +17,9 @@ public struct MinimalistEntry: TimelineEntry {
     }
 }
 
-// MARK: - AppIntent Timeline Provider (iOS 17+)
-@available(iOS 17.0, *)
-public struct SelectFavoritesTimelineProvider: AppIntentTimelineProvider {
+// MARK: - Standard Timeline Provider (100% Sideloadly & iOS 16/17/18 kompatibel)
+public struct MinimalistTimelineProvider: TimelineProvider {
     public typealias Entry = MinimalistEntry
-    public typealias Intent = SelectFavoritesIntent
     
     public init() {}
     
@@ -30,16 +27,16 @@ public struct SelectFavoritesTimelineProvider: AppIntentTimelineProvider {
         MinimalistEntry(date: Date(), favorites: FavoriteApp.defaultFavorites)
     }
     
-    public func snapshot(for configuration: SelectFavoritesIntent, in context: Context) async -> MinimalistEntry {
-        MinimalistEntry(date: Date(), favorites: configuration.resolveFavorites())
+    public func getSnapshot(in context: Context, completion: @escaping (MinimalistEntry) -> Void) {
+        completion(MinimalistEntry(date: Date(), favorites: FavoriteApp.defaultFavorites))
     }
     
-    public func timeline(for configuration: SelectFavoritesIntent, in context: Context) async -> Timeline<MinimalistEntry> {
+    public func getTimeline(in context: Context, completion: @escaping (Timeline<MinimalistEntry>) -> Void) {
         let currentDate = Date()
-        let favorites = configuration.resolveFavorites()
+        let favorites = FavoriteApp.defaultFavorites
         let calendar = Calendar.current
         
-        // Minütliche Einträge für präzise Zeitanzeige
+        // Minütliche Einträge für eine exakte Zeitanzeige
         var entries: [MinimalistEntry] = []
         for minuteOffset in 0..<60 {
             if let entryDate = calendar.date(byAdding: .minute, value: minuteOffset, to: currentDate) {
@@ -48,26 +45,26 @@ public struct SelectFavoritesTimelineProvider: AppIntentTimelineProvider {
         }
         
         let nextUpdate = calendar.date(byAdding: .hour, value: 1, to: currentDate) ?? currentDate.addingTimeInterval(3600)
-        return Timeline(entries: entries, policy: .after(nextUpdate))
+        let timeline = Timeline(entries: entries, policy: .after(nextUpdate))
+        completion(timeline)
     }
 }
 
-// MARK: - Widget Definition
+// MARK: - Widget Definition (StaticConfiguration - unempfindlich gegen Bundle-ID-Mangling)
 public struct MinimalistWidget: Widget {
     public static let kind: String = "MinimalistWidget"
     
     public init() {}
     
     public var body: some WidgetConfiguration {
-        AppIntentConfiguration(
+        StaticConfiguration(
             kind: Self.kind,
-            intent: SelectFavoritesIntent.self,
-            provider: SelectFavoritesTimelineProvider()
+            provider: MinimalistTimelineProvider()
         ) { entry in
             MinimalistWidgetView(date: entry.date, favorites: entry.favorites)
         }
         .configurationDisplayName("Minimalist Launcher")
-        .description("Dezentes Dashboard mit Datum, Uhrzeit und wählbaren App-Favoriten.")
+        .description("Dezentes Dashboard mit Datum, Uhrzeit und schnellen App-Links.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .contentMarginsDisabled()
     }

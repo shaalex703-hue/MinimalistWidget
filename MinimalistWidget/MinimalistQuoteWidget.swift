@@ -5,7 +5,6 @@
 
 import WidgetKit
 import SwiftUI
-import AppIntents
 
 // MARK: - Entry für das Quote-Widget
 public struct MinimalistQuoteEntry: TimelineEntry {
@@ -18,11 +17,9 @@ public struct MinimalistQuoteEntry: TimelineEntry {
     }
 }
 
-// MARK: - TimelineProvider für das Quote-Widget
-@available(iOS 17.0, *)
-public struct MinimalistQuoteTimelineProvider: AppIntentTimelineProvider {
+// MARK: - Standard Timeline Provider für das Quote-Widget (100% Sideloadly & iOS 16/17/18 kompatibel)
+public struct MinimalistQuoteTimelineProvider: TimelineProvider {
     public typealias Entry = MinimalistQuoteEntry
-    public typealias Intent = SelectQuoteIntent
     
     public init() {}
     
@@ -30,13 +27,13 @@ public struct MinimalistQuoteTimelineProvider: AppIntentTimelineProvider {
         MinimalistQuoteEntry(date: Date(), quote: MindfulQuote.defaultQuotes[0].text)
     }
     
-    public func snapshot(for configuration: SelectQuoteIntent, in context: Context) async -> MinimalistQuoteEntry {
-        MinimalistQuoteEntry(date: Date(), quote: configuration.resolveQuote())
+    public func getSnapshot(in context: Context, completion: @escaping (MinimalistQuoteEntry) -> Void) {
+        completion(MinimalistQuoteEntry(date: Date(), quote: MindfulQuote.quoteForToday().text))
     }
     
-    public func timeline(for configuration: SelectQuoteIntent, in context: Context) async -> Timeline<MinimalistQuoteEntry> {
+    public func getTimeline(in context: Context, completion: @escaping (Timeline<MinimalistQuoteEntry>) -> Void) {
         let currentDate = Date()
-        let quote = configuration.resolveQuote()
+        let quote = MindfulQuote.quoteForToday().text
         let calendar = Calendar.current
         
         var entries: [MinimalistQuoteEntry] = []
@@ -47,22 +44,20 @@ public struct MinimalistQuoteTimelineProvider: AppIntentTimelineProvider {
         }
         
         let nextUpdate = calendar.date(byAdding: .hour, value: 1, to: currentDate) ?? currentDate.addingTimeInterval(3600)
-        return Timeline(entries: entries, policy: .after(nextUpdate))
+        let timeline = Timeline(entries: entries, policy: .after(nextUpdate))
+        completion(timeline)
     }
 }
 
-
-// MARK: - Widget-Deklaration
-@available(iOS 17.0, *)
+// MARK: - Widget-Deklaration (StaticConfiguration)
 public struct MinimalistQuoteWidget: Widget {
     public static let kind: String = "MinimalistQuoteWidget"
     
     public init() {}
     
     public var body: some WidgetConfiguration {
-        AppIntentConfiguration(
+        StaticConfiguration(
             kind: Self.kind,
-            intent: SelectQuoteIntent.self,
             provider: MinimalistQuoteTimelineProvider()
         ) { entry in
             MinimalistQuoteWidgetView(date: entry.date, quote: entry.quote)
@@ -72,10 +67,4 @@ public struct MinimalistQuoteWidget: Widget {
         .supportedFamilies([.systemSmall, .systemMedium])
         .contentMarginsDisabled()
     }
-}
-
-#Preview {
-    MinimalistQuoteWidgetView(date: Date(), quote: "Weniger Bildschirm, mehr Leben.")
-        .frame(width: 320, height: 160)
-        .background(Color.black)
 }

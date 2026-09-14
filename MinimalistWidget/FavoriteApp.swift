@@ -32,13 +32,14 @@ public struct FavoriteApp: Identifiable, Hashable, Codable, Sendable {
         TimeWastingApps.destinationURL(for: name, rawScheme: urlScheme)
     }
     
-    // MARK: - Standard-Favoriten (genau die vom Nutzer gewünschten 5 Apps)
+    // MARK: - Standard-Favoriten (die 6 wichtigsten Apps inkl. Social Media Achtsamkeit)
     public static let defaultFavorites: [FavoriteApp] = [
         FavoriteApp(id: "phone", name: "Telefon", urlScheme: "tel://"),
         FavoriteApp(id: "messages", name: "Nachrichten", urlScheme: "messages://"),
-        FavoriteApp(id: "camera", name: "Kamera", urlScheme: "camera://"),
+        FavoriteApp(id: "whatsapp", name: "WhatsApp", urlScheme: "whatsapp://"),
+        FavoriteApp(id: "spotify", name: "Spotify", urlScheme: "spotify://"),
         FavoriteApp(id: "notes", name: "Notizen", urlScheme: "mobilenotes://"),
-        FavoriteApp(id: "calendar", name: "Kalender", urlScheme: "calshow://")
+        FavoriteApp(id: "instagram", name: "Instagram", urlScheme: "instagram://")
     ]
     
     // MARK: - Katalog beliebter iOS URL-Schemes
