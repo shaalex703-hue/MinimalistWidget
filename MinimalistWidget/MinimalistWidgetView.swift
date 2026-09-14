@@ -158,9 +158,58 @@ extension View {
     }
 }
 
-// MARK: - SwiftUI Preview
-#Preview {
-    MinimalistWidgetView(date: Date(), favorites: FavoriteApp.defaultFavorites)
-        .frame(width: 350, height: 350)
-        .background(Color.black)
+// MARK: - View für das Quote-Widget (.systemSmall & .systemMedium)
+public struct MinimalistQuoteWidgetView: View {
+    public let date: Date
+    public let quote: String
+    
+    @Environment(\.widgetFamily) private var family
+    
+    public init(date: Date, quote: String) {
+        self.date = date
+        self.quote = quote
+    }
+    
+    private var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "de_DE")
+        formatter.dateFormat = "EEEE, d. MMMM"
+        return formatter.string(from: date)
+    }
+    
+    private var formattedTime: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "de_DE")
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: date)
+    }
+    
+    public var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Oberer Bereich: Uhrzeit & Datum
+            VStack(alignment: .leading, spacing: 2) {
+                Text(formattedDate)
+                    .font(.system(size: family == .systemSmall ? 11 : 13, weight: .regular))
+                    .foregroundColor(Color.white.opacity(0.6))
+                
+                Text(formattedTime)
+                    .font(.system(size: family == .systemSmall ? 28 : 36, weight: .ultraLight))
+                    .foregroundColor(.white)
+            }
+            
+            Spacer(minLength: 8)
+            
+            // Achtsamkeits-Zitat / Fokus-Impuls
+            Text(quote)
+                .font(.system(size: family == .systemSmall ? 13 : 15, weight: .light, design: .serif))
+                .italic()
+                .foregroundColor(Color.white.opacity(0.85))
+                .lineLimit(family == .systemSmall ? 3 : 2)
+                .lineSpacing(3)
+        }
+        .padding(family == .systemSmall ? 16 : 22)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .widgetBackground(Color.black)
+    }
 }
+
