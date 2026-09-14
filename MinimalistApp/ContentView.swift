@@ -130,24 +130,19 @@ struct ContentView: View {
                             Group {
                                 switch selectedPreviewType {
                                 case .launcherLarge:
-                                    MinimalistWidgetView(date: Date(), favorites: currentFavorites)
-                                        .environment(\.widgetFamily, .systemLarge)
+                                    MinimalistWidgetView(date: Date(), favorites: currentFavorites, family: .systemLarge)
                                         .frame(height: 330)
                                 case .launcherMedium:
-                                    MinimalistWidgetView(date: Date(), favorites: currentFavorites)
-                                        .environment(\.widgetFamily, .systemMedium)
+                                    MinimalistWidgetView(date: Date(), favorites: currentFavorites, family: .systemMedium)
                                         .frame(height: 160)
                                 case .launcherSmall:
-                                    MinimalistWidgetView(date: Date(), favorites: currentFavorites)
-                                        .environment(\.widgetFamily, .systemSmall)
+                                    MinimalistWidgetView(date: Date(), favorites: currentFavorites, family: .systemSmall)
                                         .frame(width: 160, height: 160)
                                 case .quoteMedium:
-                                    MinimalistQuoteWidgetView(date: Date(), quote: selectedQuote)
-                                        .environment(\.widgetFamily, .systemMedium)
+                                    MinimalistQuoteWidgetView(date: Date(), quote: selectedQuote, family: .systemMedium)
                                         .frame(height: 160)
                                 case .quoteSmall:
-                                    MinimalistQuoteWidgetView(date: Date(), quote: selectedQuote)
-                                        .environment(\.widgetFamily, .systemSmall)
+                                    MinimalistQuoteWidgetView(date: Date(), quote: selectedQuote, family: .systemSmall)
                                         .frame(width: 160, height: 160)
                                 }
                             }

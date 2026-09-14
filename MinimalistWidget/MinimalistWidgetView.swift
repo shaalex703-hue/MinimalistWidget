@@ -10,12 +10,18 @@ import WidgetKit
 public struct MinimalistWidgetView: View {
     public let date: Date
     public let favorites: [FavoriteApp]
+    public let customFamily: WidgetFamily?
     
-    @Environment(\.widgetFamily) private var family
+    @Environment(\.widgetFamily) private var envFamily
     
-    public init(date: Date, favorites: [FavoriteApp] = FavoriteApp.defaultFavorites) {
+    private var effectiveFamily: WidgetFamily {
+        customFamily ?? envFamily
+    }
+    
+    public init(date: Date, favorites: [FavoriteApp] = FavoriteApp.defaultFavorites, family: WidgetFamily? = nil) {
         self.date = date
         self.favorites = favorites
+        self.customFamily = family
     }
     
     // MARK: - Formatierer für Datum und Uhrzeit
@@ -42,7 +48,7 @@ public struct MinimalistWidgetView: View {
 
     public var body: some View {
         Group {
-            switch family {
+            switch effectiveFamily {
             case .systemLarge:
                 largeWidgetView
             case .systemMedium:
@@ -162,12 +168,18 @@ extension View {
 public struct MinimalistQuoteWidgetView: View {
     public let date: Date
     public let quote: String
+    public let customFamily: WidgetFamily?
     
-    @Environment(\.widgetFamily) private var family
+    @Environment(\.widgetFamily) private var envFamily
     
-    public init(date: Date, quote: String) {
+    private var effectiveFamily: WidgetFamily {
+        customFamily ?? envFamily
+    }
+    
+    public init(date: Date, quote: String, family: WidgetFamily? = nil) {
         self.date = date
         self.quote = quote
+        self.customFamily = family
     }
     
     private var formattedDate: String {
@@ -189,11 +201,11 @@ public struct MinimalistQuoteWidgetView: View {
             // Oberer Bereich: Uhrzeit & Datum
             VStack(alignment: .leading, spacing: 2) {
                 Text(formattedDate)
-                    .font(.system(size: family == .systemSmall ? 11 : 13, weight: .regular))
+                    .font(.system(size: effectiveFamily == .systemSmall ? 11 : 13, weight: .regular))
                     .foregroundColor(Color.white.opacity(0.6))
                 
                 Text(formattedTime)
-                    .font(.system(size: family == .systemSmall ? 28 : 36, weight: .ultraLight))
+                    .font(.system(size: effectiveFamily == .systemSmall ? 28 : 36, weight: .ultraLight))
                     .foregroundColor(.white)
             }
             
@@ -201,13 +213,13 @@ public struct MinimalistQuoteWidgetView: View {
             
             // Achtsamkeits-Zitat / Fokus-Impuls
             Text(quote)
-                .font(.system(size: family == .systemSmall ? 13 : 15, weight: .light, design: .serif))
+                .font(.system(size: effectiveFamily == .systemSmall ? 13 : 15, weight: .light, design: .serif))
                 .italic()
                 .foregroundColor(Color.white.opacity(0.85))
-                .lineLimit(family == .systemSmall ? 3 : 2)
+                .lineLimit(effectiveFamily == .systemSmall ? 3 : 2)
                 .lineSpacing(3)
         }
-        .padding(family == .systemSmall ? 16 : 22)
+        .padding(effectiveFamily == .systemSmall ? 16 : 22)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .widgetBackground(Color.black)
     }
