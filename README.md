@@ -1,29 +1,31 @@
-# MinimalistWidget – iOS WidgetKit Target (.systemLarge)
+# Minimalist Phone iOS – Widgets & Launcher Suite
 
-Ein minimalistisches, monochromes iOS WidgetKit-Widget im eleganten Schwarz-Weiß-Look mit dezenter Datums- und Uhrzeitanzeige sowie 5 editierbaren Favoriten-Apps, die sich per Fingertipp über benutzerdefinierte Deep Links direkt öffnen.
-
-Inklusive einer integrierten **Achtsamkeits-Abfang-Routine** für zeitfressende Social-Media-Apps (z. B. Instagram, TikTok, YouTube, X, Reddit).
+Verwandelt jedes iPhone in ein ablenkungsfreies, radikal minimalistisches Telefon im Stil von *Minimalist Phone* / *Blank Spaces*:
+- **Keine bunten Icons oder Notification-Badges auf dem Home-Bildschirm**: Apps werden in die App-Mediathek verschoben.
+- **Tiefschwarzer Hintergrund (`#000000`)**: Die Widgets verschmelzen vollkommen nahtlos mit dem OLED-Display deines iPhones.
+- **Alles läuft über reine Text-Widgets**: Dezente Datums- und Zeitanzeige sowie konfigurierbare Favoriten-Apps in weißer Systemschrift (`-apple-system`), die sich per Fingertipp direkt öffnen.
+- **Integrierte 10-Sekunden Achtsamkeits-Pause**: Fängt zeitfressende Social-Media-Apps (z. B. Instagram, TikTok, YouTube, X, Reddit) vor dem Start mit einem animierten Countdown und Reflexionsfrage ab.
 
 ---
 
-## 📱 Features
+## 📱 Widget-Suite & Features
 
-- **Widget-Größe**: Ausschließlich `.systemLarge` (`.supportedFamilies([.systemLarge])`).
+- **Modularität**:
+  - **Minimalist Launcher Groß (`.systemLarge`)**: Kopfbereich mit Wochentag, Datum und Uhrzeit + 6 Favoriten-Slots.
+  - **Minimalist Launcher Mittel (`.systemMedium`)**: Split-Layout mit Uhrzeit & Datum links und Schnellzugriff auf 3 Apps rechts.
+  - **Minimalist Launcher Klein (`.systemSmall`)**: 3 Schnellzugriff-Apps mit Uhrzeit.
+  - **Minimalist Zitat & Zeit (`.systemMedium` & `.systemSmall`)**: Dezente Uhrzeitanzeige mit täglichen Achtsamkeits- und Fokus-Impulsen (*„Weniger Bildschirm, mehr Leben.“*).
 - **Monochromes Design**:
-  - Hintergrund: Reines Schwarz (`Color.black` / `.containerBackground(Color.black, for: .widget)`).
-  - Typografie Favoriten-Liste: Reiner weißer Text mit `Font.system(size: 18, weight: .light, design: .default)`.
-  - Layout-Abstand: Exakt `VStack(alignment: .leading, spacing: 18)`.
-- **Header-Bereich**: Dezente Anzeige von Wochentag, Datum (z. B. *Montag, 14. September*) und aktueller Uhrzeit (z. B. *12:24*).
-- **Interaktive App-Links**: Jeder Eintrag ist mit `Link(destination: app.widgetDestinationURL)` hinterlegt.
-- **SelectFavoritesIntent (WidgetConfigurationIntent)**:
-  - Nutzer können das Widget auf dem Home-Bildschirm gedrückt halten und unter **„Widget bearbeiten“** für die Slots 1 bis 5 beliebige System-Apps aus einem Dropdown-Menü auswählen.
-  - Sofortige Widget-Aktualisierung bei jeder Änderung.
-- **Abfang-Routine für Social-Media & zeitfressende Apps**:
-  - Wird eine Social-Media-App (z. B. Instagram, TikTok, YouTube, X, Reddit) im Widget oder in der App angetippt, öffnet sich sofort ein vollflächiger schwarzer Zwischenscreen in der Haupt-App.
-  - Ein 10-Sekunden Countdown-Kreis mit Textzähler läuft ab:
-    > *„Nimm dir einen Moment Zeit. Musst du diese App jetzt wirklich öffnen?“*
-  - **„Abbrechen“**: Schließt den Screen direkt, die App wird nicht geöffnet.
-  - **„Weiter“**: Bleibt während des Countdowns inaktiv/ausgegraut und lässt sich erst nach Ablauf der 10 Sekunden aktivieren, um die Ziel-App zu öffnen.
+  - Hintergrund: Reines Tiefschwarz (`Color.black` / `#000000`).
+  - Typografie: Reiner weißer Text mit `Font.system(size: 17, weight: .light)`.
+- **SelectFavoritesIntent & SelectQuoteIntent (AppIntents)**:
+  - Nutzer können das Widget auf dem Home-Bildschirm gedrückt halten und unter **„Widget bearbeiten“** Slots 1 bis 6 sowie das gewünschte Zitat individuell anpassen.
+  - Unterstützt alle System-Apps (Telefon, Nachrichten, WhatsApp, Spotify, Notizen, Kamera, Safari, Musik, etc.).
+- **Achtsamkeits-Pause (Mindful Pause Interception)**:
+  - Social-Media-Apps leiten über `minimalist://intervene` in die Begleit-App.
+  - Ein vollflächiger schwarzer 10-Sekunden Zwischenscreen zählt rückwärts.
+  - Erst nach Ablauf der 10 Sekunden wird der Button **„Weiter“** aktivierbar.
+  - Ein Klick auf **„Abbrechen“** schließt den Screen, die App bleibt geschlossen.
 
 ---
 
